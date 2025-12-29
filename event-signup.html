@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>活動報名 | 明德車業 MINGDE MOTOR</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .signup-section { padding: 150px 20px 80px; display: flex; justify-content: center; }
+        .signup-card { 
+            background: #fff; width: 100%; max-width: 700px; 
+            padding: 50px; border: 1px solid #eee; text-align: center; 
+        }
+        
+        /* 轉帳資訊 */
+        .payment-info {
+            background-color: #fafafa; border: 1px dashed #66cc33;
+            padding: 20px; margin: 30px 0; text-align: left;
+        }
+
+        /* 動態車輛區塊樣式 */
+        .vehicle-group {
+            background: #fdfdfd; border: 1px solid #eee;
+            padding: 20px; margin-bottom: 20px; position: relative;
+        }
+        .vehicle-group-title {
+            font-weight: bold; color: #66cc33; margin-bottom: 15px; display: block;
+        }
+        
+        .form-container { display: flex; flex-direction: column; gap: 20px; }
+        .form-container input { padding: 15px; font-family: "標楷體"; font-size: 1.1rem; text-align: center; border: 1px solid #ddd; width: 100%; }
+        
+        /* 核心要求：黑底白字選單與按鈕 */
+        .form-group select {
+            background-color: #77777753 !important; color: #000 !important;
+            width: 100%; padding: 15px; font-family: "標楷體"; font-size: 1.1rem;
+            text-align-last: center; border: none; cursor: pointer;
+        }
+
+        .btn-add-vehicle {
+            background: #f4f4f4; color: #333; border: 1px solid #ddd;
+            padding: 10px; cursor: pointer; margin-bottom: 20px; transition: 0.3s;
+        }
+        .btn-add-vehicle:hover { background: #eee; }
+
+        .btn-submit { 
+            background: #000; color: #fff; padding: 18px; border: none; 
+            font-size: 1.2rem; font-weight: bold; cursor: pointer; letter-spacing: 5px; transition: 0.3s;
+        }
+        .btn-submit:hover { background: #66cc33; color: #777; }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="index.html" class="logo-container">
+            <img src="image/logo.jpg" alt="明德車業 Logo" class="logo-img">
+        </a>
+        <nav class="nav-list">
+            <a href="index.html">首頁</a>
+            <a href="products.html">現車庫存</a>
+            <a href="booking-ride.html" class="nav-btn ride">預約試乘</a>
+            <a href="booking-service.html" class="nav-btn">保養預約</a>
+            <a href="event-signup.html">活動報名</a>
+        </nav>
+    </header>
+
+    <main class="signup-section">
+        <div class="signup-card">
+            <h2>活動報名</h2>
+            <p style="color: #66cc33; font-weight: bold;">FAMILY & GROUP REGISTRATION</p>
+            
+            <div class="payment-info">
+                <h4>💰 轉帳資訊</h4>
+                <p>銀行：822 中國信託 (九如分行)</p>
+                <p>帳號：12345-67890-123 | 戶名：明德車業</p>
+                <p style="font-size: 0.85rem; color: #888; margin-top: 10px;">※ 多人報名可統一匯款，請於備註註明總人數。</p>
+            </div>
+
+            <form id="signupForm" class="form-container" onsubmit="alert('報名已送出！'); return true;">
+                <div class="form-group">
+                    <select required>
+                        <option value="" disabled selected>— 選擇參加活動 —</option>
+                        <option>2025.01.20 | Kawasaki 旗艦車友盃</option>
+                        <option>2025.02.01 | KYMCO RTS 分享會</option>
+                    </select>
+                </div>
+                
+                <input type="text" placeholder="主要聯絡人姓名" required>
+                <input type="tel" placeholder="聯絡電話" required>
+                <input type="text" placeholder="匯款帳號末五碼" required>
+
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 10px 0;">
+                
+                <div id="vehicleContainer">
+                    <div class="vehicle-group">
+                        <span class="vehicle-group-title">第一位參加者車輛</span>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <input type="text" placeholder="騎士姓名" required>
+                            <input type="text" placeholder="車種 (例: ZX-6R)" required>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" class="btn-add-vehicle" onclick="addVehicle()">+ 新增一位參加者 / 車輛</button>
+
+                <textarea placeholder="其他需求備註 (例如: 兩大一小、用餐習慣)" rows="3" style="padding:15px; font-family:'標楷體'; text-align:center; border:1px solid #ddd;"></textarea>
+                
+                <button type="submit" class="btn-submit">確認提交報名表</button>
+            </form>
+        </div>
+    </main>
+
+    <section class="footer-info">
+            <div class="footer-container">
+                <div class="footer-column">
+                    <h4>服務項目</h4>
+                    <ul>
+                        <li><a href="products.html">現車庫存</a></li>
+                        <li><a href="booking-ride.html">預約試乘</a></li>
+                        <li><a href="booking-service.html">預約保養</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>門市位置</h4>
+                    <p>高雄市三民區九如二路 575 號</p>
+                    <a href="https://maps.google.com/?q=高雄市三民區九如二路575號" 
+                    target="_blank" class="nav-link" style="display:inline-block; border:1px solid #66cc33; padding:5px 15px; color:#66cc33; text-decoration:none; margin-top:10px;">
+                    ➤ 開啟 Google 導航
+                    </a>
+                </div>
+                <div class="footer-column">
+                    <h4>營業時間</h4>
+                    <p>週一至週五：09:30 – 20:30</p>
+                    <p>週六：09:30 – 18:00 (隔週休)</p>
+                    <p style="color: #ff4d4d; font-weight: bold;">週日：休息</p>
+                </div>
+                <div class="footer-column">
+                    <h4>聯絡資訊</h4>
+                    <p>Tel: 07-321-9599</p>
+                    <p>FB: 明德車業有限公司 </p>
+                    <p>Gmail: kawasaki9750@gmail.com</p>
+                    <p>Line@: @mdmotors</p>
+                </div>
+            </div>
+        </section>
+
+    <script>
+        let vehicleCount = 1;
+        function addVehicle() {
+            vehicleCount++;
+            const container = document.getElementById('vehicleContainer');
+            const div = document.createElement('div');
+            div.className = 'vehicle-group';
+            div.innerHTML = `
+                <span class="vehicle-group-title">第 ${vehicleCount} 位參加者車輛</span>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <input type="text" placeholder="騎士姓名" required>
+                    <input type="text" placeholder="車種 (例: KRV 180)" required>
+                </div>
+                <button type="button" onclick="this.parentElement.remove()" style="margin-top:10px; color:red; border:none; background:none; cursor:pointer; font-size:0.9rem;">[ 移除此項目 ]</button>
+            `;
+            container.appendChild(div);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>預約試乘 | 明德車業 MINGDE MOTOR</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* 繼承您提供的 CSS 變數與風格 */
+        .booking-section {
+            padding: 180px 20px 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--white);
+        }
+
+        .booking-card {
+            background: #ffffff;
+            width: 100%;
+            max-width: 650px;
+            padding: 60px;
+            border-radius: 4px;
+            border: 1px solid var(--line);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.03);
+            text-align: center;
+        }
+
+        .booking-card h2 { font-size: 3rem; letter-spacing: 12px; margin-bottom: 10px; color: var(--plaza-black); }
+        .booking-subtitle { color: var(--kawa-green); font-weight: bold; letter-spacing: 4px; margin-bottom: 40px; display: block; }
+        .booking-form { display: flex; flex-direction: column; gap: 20px; }
+
+        /* 一般輸入框 */
+        .booking-form input, .booking-form textarea {
+            width: 100%; padding: 18px; border: 1px solid var(--line);
+            background: var(--light-gray); font-size: 1.2rem; font-family: "標楷體";
+            text-align: center; border-radius: 4px;
+        }
+
+        /* 核心要求：下拉選單黑底白字 (24H時段選單也包含在內) */
+        .booking-form select {
+            width: 100%; padding: 18px; background-color: #ffffff !important;
+            color: #000000 !important; border: 1px solid #777; font-size: 1.2rem;
+            font-family: "標楷體"; text-align-last: center; cursor: pointer;
+            border-radius: 4px; appearance: none;
+        }
+
+        .booking-form select:disabled { background-color: #333 !important; color: #777 !important; }
+
+        .form-row { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 20px; }
+
+        .btn-submit {
+            background: var(--kawa-green); color: #777; padding: 22px; border: none;
+            font-size: 1.6rem; font-weight: bold; cursor: pointer; letter-spacing: 10px;
+            transition: var(--transition); margin-top: 20px; border-radius: 4px;
+        }
+
+        .btn-submit:hover { background: var(--kawa-dark-green); transform: translateY(-3px); }
+
+        .date-hint { color: #ff4d4d; font-size: 1rem; margin-top: -15px; font-weight: bold; display: none; }
+
+        @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="index.html" class="logo-container">
+            <img src="image/logo.jpg" alt="明德車業 Logo" class="logo-img">
+        </a>
+        <nav class="nav-list">
+            <a href="index.html">首頁</a>
+            <a href="products.html">現車庫存</a>
+            <a href="booking-ride.html" class="nav-btn ride">預約試乘</a>
+            <a href="booking-service.html" class="nav-btn">保養預約</a>
+            <a href="event-signup.html">活動報名</a>
+        </nav>
+    </header>
+
+    <main class="booking-section">
+        <div class="booking-card">
+            <h2>預約試乘</h2>
+            <span class="booking-subtitle">BOOKING YOUR RIDE</span>
+            
+            <form class="booking-form" onsubmit="alert('預約成功，我們將與您聯繫！'); return true;">
+                <input type="text" placeholder="您的姓名" required>
+                <input type="tel" placeholder="聯絡電話" required>
+
+                <select id="brandSelect" onchange="updateModels()" required>
+                    <option value="" disabled selected>— 第一步：請選擇品牌 —</option>
+                    <option value="kawasaki">KAWASAKI 川崎</option>
+                    <option value="kymco">KYMCO 光陽</option>
+                </select>
+
+                <select id="modelSelect" disabled required>
+                    <option value="" disabled selected>— 第二步：請選擇預約車款 —</option>
+                </select>
+
+                <div class="form-row">
+                    <input type="date" id="bookDate" onchange="generate24HSlots()" required>
+                    <select id="timeSelect" required>
+                        <option value="" disabled selected>預約時間</option>
+                    </select>
+                </div>
+                <div id="dateError" class="date-hint">⚠️ 週日公休，請選擇其他日期</div>
+
+                <textarea placeholder="若有特殊需求請備註" rows="3"></textarea>
+                <button type="submit" class="btn-submit">確認提交</button>
+            </form>
+        </div>
+    </main>
+
+    <section class="footer-info">
+            <div class="footer-container">
+                <div class="footer-column">
+                    <h4>服務項目</h4>
+                    <ul>
+                        <li><a href="products.html">現車庫存</a></li>
+                        <li><a href="booking-ride.html">預約試乘</a></li>
+                        <li><a href="booking-service.html">預約保養</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>門市位置</h4>
+                    <p>高雄市三民區九如二路 575 號</p>
+                    <a href="https://www.google.com/maps/dir/?api=1&destination=明德車業有限公司" 
+                    target="_blank" class="nav-link">
+                    ➤ 開啟 Google 導航
+                    </a>
+                </div>
+                <div class="footer-column">
+                    <h4>營業時間</h4>
+                    <p>週一至週五：09:30 – 20:30</p>
+                    <p>週六：09:30 – 18:00 (隔週休)</p>
+                    <p style="color: #ff4d4d; font-weight: bold;">週日：休息</p>
+                </div>
+                <div class="footer-column">
+                    <h4>聯絡資訊</h4>
+                    <p>Tel: 07-321-9599</p>
+                    <p>FB: 明德車業有限公司 </p>
+                    <p>Gmail: kawasaki9750@gmail.com</p>
+                    <p>Line@: @mdmotors</p>
+                </div>
+            </div>
+        </section>
+
+    <script>
+        // 設定最小預約日期為明天
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        document.getElementById('bookDate').setAttribute('min', tomorrow.toISOString().split('T')[0]);
+
+        const bikeData = {
+            kawasaki: [
+                { group: "仿賽系列", models: ["ZX-10R", "ZX-6R", "ZX-4RR"] },
+                { group: "街車系列", models: ["Z H2", "Z 900", "Z 500"] },
+                { group: "復古系列", models: ["Z 900RS", "Z 650RS", "W800"] }
+            ],
+            kymco: [
+                { group: "大型重機", models: ["AK Premium", "XCITING 400"] },
+                { group: "旗艦白牌", models: ["RomaGT", "RTS 135", "KRV Nero"] }
+            ]
+        };
+
+        function updateModels() {
+            const brand = document.getElementById('brandSelect').value;
+            const modelSelect = document.getElementById('modelSelect');
+            modelSelect.innerHTML = '<option value="" disabled selected>— 第二步：請選擇預約車款 —</option>';
+            modelSelect.disabled = false;
+            bikeData[brand].forEach(cat => {
+                const group = document.createElement('optgroup');
+                group.label = cat.group;
+                cat.models.forEach(m => {
+                    const opt = document.createElement('option');
+                    opt.value = m; opt.textContent = m;
+                    group.appendChild(opt);
+                });
+                modelSelect.appendChild(group);
+            });
+        }
+
+        function generate24HSlots() {
+            const dateInput = document.getElementById('bookDate');
+            const timeSelect = document.getElementById('timeSelect');
+            const dateError = document.getElementById('dateError');
+            const selectedDate = new Date(dateInput.value);
+            const day = selectedDate.getDay(); // 0 是週日
+
+            if (day === 0) {
+                dateError.style.display = 'block';
+                dateInput.value = '';
+                timeSelect.innerHTML = '<option value="" disabled selected>預約時間</option>';
+                return;
+            } else {
+                dateError.style.display = 'none';
+            }
+
+            // 定義營業時間範圍 (24小時制)
+            let startHour = 9;
+            let startMin = 30;
+            let endHour = (day === 6) ? 18 : 20; // 週六 18:00，平日 20:30 (最後預約設為 20:00)
+            let endMin = (day === 6) ? 0 : 30;
+
+            let options = '<option value="" disabled selected>預約時間</option>';
+            
+            // 產生每半小時一個間隔的 24H 時段
+            for (let h = startHour; h <= endHour; h++) {
+                for (let m = 0; m < 60; m += 30) {
+                    // 過濾掉 09:00 (因為 09:30 才開始)
+                    if (h === 9 && m < 30) continue;
+                    // 過濾掉超過打烊時間的時段
+                    if (h === endHour && m > endMin) continue;
+
+                    let hh = h.toString().padStart(2, '0');
+                    let mm = m.toString().padStart(2, '0');
+                    let timeStr = `${hh}:${mm}`;
+                    options += `<option value="${timeStr}">${timeStr}</option>`;
+                }
+            }
+            timeSelect.innerHTML = options;
+        }
+    </script>
+</body>
+</html>

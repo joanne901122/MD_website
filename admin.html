@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>明德車業 - 業者管理</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .admin-main { padding-top: 120px; }
+        .data-table { width: 100%; background: var(--card-bg); border-radius: 10px; overflow: hidden; }
+        .data-table th, .data-table td { padding: 15px; text-align: left; border-bottom: 1px solid #333; }
+        .data-table th { background: #222; color: var(--primary); }
+    </style>
+</head>
+<body class="admin-main">
+    <header>
+        <div class="logo">明德管理後台</div>
+        <nav><a href="index.html">返回前台</a></nav>
+    </header>
+
+    <section class="section">
+        <h3>📅 待處理預約</h3>
+        <table class="data-table" id="booking-list">
+            <thead>
+                <tr><th>時間</th><th>客戶</th><th>電話</th><th>項目</th><th>預約日期</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>系統提示</td><td colspan="4">目前暫無預約資料</td></tr>
+            </tbody>
+        </table>
+
+        <h3 style="margin-top: 50px;">🏍️ 現有庫存管理</h3>
+        <div class="booking-form" style="margin-top: 20px;">
+            <input type="text" placeholder="車輛型號" class="form-input">
+            <input type="text" placeholder="價格" class="form-input">
+            <input type="text" placeholder="圖片網址" class="form-input">
+            <button class="btn btn-full">新增上架車輛</button>
+        </div>
+    </section>
+</body>
+</html>

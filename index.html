@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>明德車業 MINGDE MOTOR | Kawasaki 高雄旗艦</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* 確保活動資訊區塊符合您的設計風格 */
+        .events-container {
+            padding: 80px 5%;
+            background-color: #ffffff;
+        }
+
+        .events-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            letter-spacing: 10px;
+            margin-bottom: 10px;
+            color: #000;
+        }
+
+        .section-subtitle {
+            color: #66cc33;
+            font-weight: bold;
+            letter-spacing: 4px;
+        }
+
+        /* 活動卡片網格 */
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .event-card {
+            background: #fafafa;
+            border: 1px solid #eee;
+            position: relative;
+            padding: 50px 30px 30px;
+            transition: 0.3s;
+            text-align: left;
+        }
+
+        .event-card:hover {
+            transform: translateY(-10px);
+            border-color: #66cc33;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.05);
+        }
+
+        .event-tag {
+            position: absolute;
+            top: 0; left: 0;
+            background: #000;
+            color: #fff;
+            padding: 5px 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .event-date {
+            color: #66cc33;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .event-body h3 {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: #000;
+        }
+
+        .event-body p {
+            color: #666;
+            font-size: 1.1rem; /* 配合標楷體閱讀感 */
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        /* 按鈕風格統一：黑底白字 */
+        .event-link {
+            display: block;
+            background: #000;
+            color: #fff;
+            text-align: center;
+            padding: 12px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .event-link:hover {
+            background: #66cc33;
+            color: #000;
+        }
+
+        /* 主視覺區四按鈕排版優化 */
+        .hero-btns {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="index.html" class="logo-container">
+            <img src="image/logo.jpg" alt="明德車業 Logo" class="logo-img">
+        </a>
+        <nav class="nav-list">
+            <a href="index.html">首頁</a>
+            <a href="products.html">現車庫存</a>
+            <a href="booking-ride.html" class="nav-btn ride">預約試乘</a>
+            <a href="booking-service.html" class="nav-btn">保養預約</a>
+            <a href="event-signup.html" style="margin-left: 20px; text-decoration: none; color: #000; font-weight: bold;">活動報名</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero-plaza">
+            <div class="hero-content">
+                <h2>THE SPIRIT OF PERFORMANCE</h2>
+                <h1>明德車業</h1>
+                <p>追求極致性能，守護您的每一趟冒險</p>
+                <div class="hero-btns">
+                    <a href="products.html" class="btn-primary">瀏覽在庫車輛</a>
+                    <a href="booking-ride.html" class="btn-outline">立即預約試乘</a>
+                    <a href="booking-service.html" class="btn-outline">預約專業保養</a>
+                    <a href="event-signup.html" class="btn-primary">參加精彩活動</a>
+                </div>
+            </div>
+        </section>
+        
+        <section class="plaza-grid">
+            <a href="products.html" class="plaza-item">
+                <span class="s-num">01 / SALES</span>
+                <h3>二手車買賣</h3>
+                <p>不分廠牌，提供透明鑑定估價服務，公平交易最放心。</p>
+            </a>
+            <a href="products.html" class="plaza-item">
+                <span class="s-num">02 / KYMCO</span>
+                <h3>光陽機車經銷</h3>
+                <p>KYMCO 授權經銷，全系列新車現場展示，售後有保障。</p>
+            </a>
+            <a href="booking-service.html" class="plaza-item">
+                <span class="s-num">03 / KAWASAKI</span>
+                <h3>川崎重機經銷</h3>
+                <p>Kawasaki 高雄專業中心，旗艦級技術團隊為您服務。</p>
+            </a>
+            <a href="booking-service.html" class="plaza-item">
+                <span class="s-num">04 / SERVICE</span>
+                <h3>專業維修保養</h3>
+                <p>精密電腦診斷，重機專屬深度調教，維持最佳車況。</p>
+            </a>
+        </section>
+        
+        <section class="events-container">
+            <div class="events-header">
+                <h2 class="section-title">活動資訊</h2>
+                <p class="section-subtitle">LATEST EVENTS</p>
+            </div>
+
+            <div class="events-grid">
+                <div class="event-card">
+                    <div class="event-tag">熱門活動</div>
+                    <div class="event-body">
+                        <span class="event-date">2025.01.20</span>
+                        <h3>Kawasaki 旗艦車友盃</h3>
+                        <p>邀請所有車主共同馳騁阿公店水庫，名額有限，報名從速。</p>
+                        <a href="event-signup.html" class="event-link">立即報名</a>
+                    </div>
+                </div>
+
+                <div class="event-card">
+                    <div class="event-tag">促銷</div>
+                    <div class="event-body">
+                        <span class="event-date">2025.02.01</span>
+                        <h3>KYMCO RTS 購車禮</h3>
+                        <p>入主 RTS 135 即贈專屬精品藍芽耳機組，現車供應中。</p>
+                        <a href="event-signup.html" class="event-link">立即報名</a>
+                    </div>
+                </div>
+
+                <div class="event-card">
+                    <div class="event-tag">公告</div>
+                    <div class="event-body">
+                        <span class="event-date">2025.01.10</span>
+                        <h3>春節公休啟事</h3>
+                        <p>除夕至初五休息，初六開工。保養維修請提早預約安排。</p>
+                        <a href="booking-service.html" class="event-link">預約保養</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="footer-info">
+            <div class="footer-container">
+                <div class="footer-column">
+                    <h4>服務項目</h4>
+                    <ul>
+                        <li><a href="products.html">現車庫存</a></li>
+                        <li><a href="booking-ride.html">預約試乘</a></li>
+                        <li><a href="booking-service.html">預約保養</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>門市位置</h4>
+                    <p>高雄市三民區九如二路 575 號</p>
+                    <a href="https://www.google.com/maps/search/?api=1&query=高雄市三民區九如二路575號" 
+                    target="_blank" class="nav-link" style="display:inline-block; border:1px solid #66cc33; padding:5px 15px; color:#66cc33; text-decoration:none; margin-top:10px;">
+                    ➤ 開啟 Google 導航
+                    </a>
+                </div>
+                <div class="footer-column">
+                    <h4>營業時間</h4>
+                    <p>週一至週五：09:30 – 20:30</p>
+                    <p>週六：09:30 – 18:00 (隔週休)</p>
+                    <p style="color: #ff4d4d; font-weight: bold;">週日：休息</p>
+                </div>
+                <div class="footer-column">
+                    <h4 style="margin-bottom: 20px;">聯絡資訊</h4>
+                    <p>Tel: <a href="tel:073111111" class="footer-link">07-311-1111</a></p>
+                    <p>FB: <a href="https://www.facebook.com/MingDeCheYeYouXianGongSi/?locale=zh_TW" target="_blank" class="footer-link">明德車業有限公司</a></p>
+                    <p>Gmail: <a href="mailto:kawasaki9750@gmail.com" class="footer-link">kawasaki9750@gmail.com</a></p>
+                    <p>Line@: <a href="https://line.me/R/ti/p/@mdmotors" target="_blank" class="footer-link">@mdmotors</a></p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bottom-bar" style="padding: 30px; border-top: 1px solid #eee; text-align: center; color: #aaa;">
+        <p>© 2025 MINGDE MOTOR. All Rights Reserved.</p>
+    </footer>
+</body>
+</html>
