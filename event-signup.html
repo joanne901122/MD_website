@@ -33,14 +33,20 @@
                 <p style="font-size: 0.85rem; color: #888; margin-top: 10px;">※ 多人報名可統一匯款，請於備註註明總人數。</p>
             </div>
 
+            <!-- 活動選擇區域 -->
+            <div id="eventSelectContainer" class="form-group" style="display: none; margin-bottom: 20px;">
+                <select id="eventSelect" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 15px;">
+                    <option value="" disabled selected>— 選擇參加活動 —</option>
+                </select>
+            </div>
+
             <form id="signupForm" class="form-container" onsubmit="alert('報名已送出！'); return true;">
-                <div class="form-group">
-                    <select required>
-                        <option value="" disabled selected>— 選擇參加活動 —</option>
-                        <option>2025.01.20 | Kawasaki 旗艦車友盃</option>
-                        <option>2025.02.01 | KYMCO RTS 分享會</option>
-                    </select>
+                <div id="eventInfo" style="background: #f8f8f8; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: none;">
+                    <h3 id="eventTitle" style="margin: 0 0 10px 0; color: #333;"></h3>
+                    <p id="eventDate" style="margin: 0 0 10px 0; color: #666;"></p>
+                    <p id="eventDescription" style="margin: 0; color: #444; line-height: 1.5;"></p>
                 </div>
+                <input type="hidden" id="selectedEvent" name="event" required>
                 
                 <input type="text" placeholder="主要聯絡人姓名" required>
                 <input type="tel" placeholder="聯絡電話" required>
@@ -102,6 +108,89 @@
         </section>
 
     <script>
+        // 活動資料
+        const events = {
+            'kawasaki-0120': {
+                id: 'kawasaki-0120',
+                title: 'Kawasaki 旗艦車友盃',
+                date: '2025.01.20',
+                description: '邀請所有車主共同馳騁阿公店水庫，名額有限，報名從速。',
+                price: 'NT$1,200/人 (含保險、午餐、紀念品)'
+            },
+            'kymco-rts': {
+                id: 'kymco-rts',
+                title: 'KYMCO RTS 分享會',
+                date: '2025.02.01',
+                description: 'RTS 135 新車發表會，現場試乘體驗，購車享專屬優惠。',
+                price: '免費參加'
+            }
+        };
+
+        // 從 URL 獲取參數
+        function getUrlParameter(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        // 頁面載入時執行
+        document.addEventListener('DOMContentLoaded', function() {
+            const eventId = getUrlParameter('event');
+            const eventInfo = document.getElementById('eventInfo');
+            const eventTitle = document.getElementById('eventTitle');
+            const eventDate = document.getElementById('eventDate');
+            const selectedEvent = document.getElementById('selectedEvent');
+            
+            if (eventId && events[eventId]) {
+                const event = events[eventId];
+                eventInfo.style.display = 'block';
+                eventTitle.textContent = event.title;
+                eventDate.textContent = event.date;
+                eventDescription.innerHTML = `
+                    ${event.description}<br>
+                    <strong>活動費用：</strong>${event.price}
+                `;
+                selectedEvent.value = event.title;
+            } else {
+                // 如果沒有指定活動或活動不存在，顯示下拉選單
+                const eventSelectContainer = document.getElementById('eventSelectContainer');
+                const eventSelect = document.getElementById('eventSelect');
+                
+                // 清空現有選項
+                while (eventSelect.options.length > 1) {
+                    eventSelect.remove(1);
+                }
+                
+                // 添加活動選項
+                Object.values(events).forEach(event => {
+                    const option = document.createElement('option');
+                    option.value = event.id;
+                    option.textContent = `${event.date} | ${event.title}`;
+                    eventSelect.appendChild(option);
+                });
+                
+                // 顯示下拉選單容器
+                eventSelectContainer.style.display = 'block';
+                
+                // 監聽下拉選單變更
+                eventSelect.addEventListener('change', function() {
+                    const selectedId = this.value;
+                    if (selectedId && events[selectedId]) {
+                        const event = events[selectedId];
+                        eventInfo.style.display = 'block';
+                        eventTitle.textContent = event.title;
+                        eventDate.textContent = event.date;
+                        eventDescription.innerHTML = `
+                            ${event.description}<br>
+                            <strong>活動費用：</strong>${event.price}
+                        `;
+                        selectedEvent.value = event.title;
+                    } else {
+                        eventInfo.style.display = 'none';
+                    }
+                });
+            }
+        });
+
         let vehicleCount = 1;
         function addVehicle() {
             vehicleCount++;

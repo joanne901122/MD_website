@@ -16,8 +16,8 @@
         <nav class="nav-list">
             <a href="index.html">首頁</a>
             <a href="products.html">現車庫存</a>
-            <a href="booking-ride.html">預約試乘</a>
-            <a href="booking-service.html">保養預約</a>
+            <a href="booking-ride.html" class="nav-btn ride">預約試乘</a>
+            <a href="booking-service.html" class="nav-btn">保養預約</a>
             <a href="event-signup.html">活動報名</a>
         </nav>
     </header>
@@ -35,6 +35,7 @@
                     <option value="" disabled selected>— 第一步：請選擇品牌 —</option>
                     <option value="kawasaki">KAWASAKI 川崎</option>
                     <option value="kymco">KYMCO 光陽</option>
+                    <option value="used">二手車輛</option>
                 </select>
 
                 <select id="modelSelect" disabled required>
@@ -90,12 +91,84 @@
         </section>
 
     <script>
+        // 從URL獲取參數
+        function getUrlParameter(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        // 自動選擇品牌和車型
+        function autoSelectBike() {
+            const brand = getUrlParameter('brand');
+            const model = getUrlParameter('model');
+            
+            if (brand && model) {
+                // 設置品牌
+                const brandSelect = document.getElementById('brandSelect');
+                const brandLower = brand.toLowerCase();
+                
+                // 先嘗試精確匹配
+                let brandFound = false;
+                for (let i = 0; i < brandSelect.options.length; i++) {
+                    if (brandSelect.options[i].value.toLowerCase() === brandLower) {
+                        brandSelect.selectedIndex = i;
+                        // 觸發change事件來加載車型
+                        const event = new Event('change');
+                        brandSelect.dispatchEvent(event);
+                        brandFound = true;
+                        
+                        // 等待車型加載完成
+                        setTimeout(() => {
+                            const modelSelect = document.getElementById('modelSelect');
+                            // 先嘗試完全匹配
+                            let modelFound = false;
+                            for (let i = 0; i < modelSelect.options.length; i++) {
+                                if (modelSelect.options[i].value === model) {
+                                    modelSelect.selectedIndex = i;
+                                    modelFound = true;
+                                    break;
+                                }
+                            }
+                            // 如果沒找到完全匹配的，嘗試部分匹配
+                            if (!modelFound) {
+                                for (let i = 0; i < modelSelect.options.length; i++) {
+                                    if (modelSelect.options[i].text.includes(model)) {
+                                        modelSelect.selectedIndex = i;
+                                        modelFound = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            // 如果還是沒找到，使用第一個可選項
+                            if (!modelFound && modelSelect.options.length > 1) {
+                                modelSelect.selectedIndex = 1; // 跳過第一個提示選項
+                            }
+                        }, 200); // 增加等待時間確保車型已載入
+                        break;
+                    }
+                }
+                
+                // 如果品牌沒找到，使用第一個可選項
+                if (!brandFound && brandSelect.options.length > 1) {
+                    brandSelect.selectedIndex = 1; // 跳過第一個提示選項
+                    const event = new Event('change');
+                    brandSelect.dispatchEvent(event);
+                }
+            }
+        }
+
+        // 頁面載入完成後執行
+        document.addEventListener('DOMContentLoaded', function() {
+            autoSelectBike();
+        });
+
         // 設定最小預約日期為明天
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() + 1);
         document.getElementById('bookDate').setAttribute('min', tomorrow.toISOString().split('T')[0]);
 
-        const bikeData = {
+        // 將bikeData設為全局變量，方便其他函數訪問
+        window.bikeData = {
             kawasaki: [
                 { group: "仿賽系列", models: ["ZX-10R", "ZX-6R", "ZX-4RR"] },
                 { group: "街車系列", models: ["Z H2", "Z 900", "Z 500"] },
@@ -104,6 +177,9 @@
             kymco: [
                 { group: "大型重機", models: ["AK Premium", "XCITING 400"] },
                 { group: "旗艦白牌", models: ["RomaGT", "RTS 135", "KRV Nero"] }
+            ],
+            used: [
+                { group: "二手車款", models: ["HONDA CBR600RR", "YAMAHA MT-07"] }
             ]
         };
 
