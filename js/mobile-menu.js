@@ -1,70 +1,81 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // 確保只在行動裝置上執行
-    if (window.innerWidth <= 992) {
-        const menuToggle = document.querySelector('.menu-toggle');
-        const navList = document.querySelector('.nav-list');
-        const overlay = document.querySelector('.overlay');
-        const body = document.body;
-        
-        // 點擊漢堡選單按鈕
-        if (menuToggle) {
-            menuToggle.addEventListener('click', function(e) {
-                e.stopPropagation();
-                this.classList.toggle('active');
-                navList.classList.toggle('active');
-                overlay.classList.toggle('active');
-                body.style.overflow = this.classList.contains('active') ? 'hidden' : '';
-            });
-        }
-        
-        // 點擊遮罩關閉選單
-        if (overlay) {
-            overlay.addEventListener('click', function() {
-                menuToggle.classList.remove('active');
-                navList.classList.remove('active');
-                this.classList.remove('active');
-                body.style.overflow = '';
-            });
-        }
-        
-        // 點擊導航連結關閉選單
-        const navLinks = document.querySelectorAll('.nav-list a');
-        navLinks.forEach(link => {
-            link.addEventListener('click', function() {
-                menuToggle.classList.remove('active');
-                navList.classList.remove('active');
-                overlay.classList.remove('active');
-                body.style.overflow = '';
-            });
-        });
-        
-        // 點擊頁面其他區域關閉選單
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.nav-list') && !e.target.closest('.menu-toggle')) {
-                menuToggle.classList.remove('active');
-                navList.classList.remove('active');
-                overlay.classList.remove('active');
-                body.style.overflow = '';
-            }
-        });
-    }
+    const menuToggle = document.querySelector('.menu-toggle');
+    const navList = document.querySelector('.nav-list');
+    const overlay = document.querySelector('.overlay');
+    const body = document.body;
     
-    // 視窗大小改變時重新整理選單狀態
-    let resizeTimer;
-    window.addEventListener('resize', function() {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(function() {
-            if (window.innerWidth > 992) {
-                // 桌面版：確保選單可見
-                const navList = document.querySelector('.nav-list');
-                const overlay = document.querySelector('.overlay');
-                const menuToggle = document.querySelector('.menu-toggle');
-                
-                if (navList) navList.classList.remove('active');
-                if (overlay) overlay.classList.remove('active');
-                if (menuToggle) menuToggle.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-        }, 250);
+    // 確保元素存在
+    if (!menuToggle || !navList || !overlay) return;
+
+    // 切換選單函數
+    function toggleMenu(isOpening) {
+        menuToggle.classList.toggle('active', isOpening);
+        navList.classList.toggle('active', isOpening);
+        overlay.classList.toggle('active', isOpening);
+        body.classList.toggle('menu-open', isOpening);
+
+        // 處理滾動鎖定
+        if (isOpening) {
+            const scrollY = window.scrollY;
+            body.style.position = 'fixed';
+            body.style.top = `-${scrollY}px`;
+            body.style.width = '100%';
+        } else {
+            const scrollY = body.style.top;
+            body.style.position = '';
+            body.style.top = '';
+            body.style.width = '';
+            window.scrollTo(0, parseInt(scrollY || '0') * -1);
+        }
+    }
+
+    // 點擊漢堡選單按鈕
+    menuToggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const isOpening = !this.classList.contains('active');
+        toggleMenu(isOpening);
     });
+
+    // 點擊遮罩關閉選單
+    overlay.addEventListener('click', function() {
+        toggleMenu(false);
+    });
+
+    // 點擊導航連結關閉選單
+    const navLinks = document.querySelectorAll('.nav-list a');
+    navLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            toggleMenu(false);
+        });
+    });
+
+    // 點擊頁面其他區域關閉選單
+    document.addEventListener('click', function(e) {
+        if (menuToggle.classList.contains('active') && 
+            !e.target.closest('.nav-list') && 
+            !e.target.closest('.menu-toggle')) {
+            toggleMenu(false);
+        }
+    });
+
+    // 視窗大小改變時檢查是否要隱藏選單
+    function handleResize() {
+        if (window.innerWidth > 992) {
+            toggleMenu(false);
+        }
+    }
+
+    // 添加防抖函數
+    function debounce(func, wait) {
+        let timeout;
+        return function() {
+            const context = this;
+            const args = arguments;
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(context, args), wait);
+        };
+    }
+
+    // 視窗大小改變時重新整理選單狀態
+    window.addEventListener('resize', debounce(handleResize, 250));
 });

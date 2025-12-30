@@ -24,12 +24,19 @@
             <a href="index.html" class="logo-container">
                 <img src="image/logo.jpg" alt="明德車業 Logo" class="logo-img">
             </a>
+            <button class="menu-toggle" aria-label="選單">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
             <nav class="nav-list">
-                <a href="index.html">首頁</a>
-                <a href="products.html">現車庫存</a>
-                <a href="booking-ride.html" class="nav-btn ride">預約試乘</a>
-                <a href="booking-service.html" class="nav-btn">保養預約</a>
-                <a href="event-signup.html">活動報名</a>
+                <div class="nav-inner">
+                    <a href="index.html">首頁</a>
+                    <a href="products.html">現車庫存</a>
+                    <a href="booking-ride.html" class="nav-btn ride">預約試乘</a>
+                    <a href="booking-service.html" class="nav-btn">保養預約</a>
+                    <a href="event-signup.html">活動報名</a>
+                </div>
             </nav>
             <div class="overlay"></div>
         </div>
@@ -85,9 +92,11 @@
                 <div class="footer-column">
                     <h4>服務項目</h4>
                     <ul>
+                        <li><a href="index.html">關於我們</a></li>
                         <li><a href="products.html">現車庫存</a></li>
                         <li><a href="booking-ride.html">預約試乘</a></li>
                         <li><a href="booking-service.html">預約保養</a></li>
+                        <li><a href="event-signup.html">活動報名</a></li>
                     </ul>
                 </div>
                 <div class="footer-column">
@@ -158,5 +167,6 @@
             timeSelect.innerHTML = options;
         }
     </script>
+    <script src="js/mobile-menu.js"></script>
 </body>
 </html>

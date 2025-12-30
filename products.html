@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/products.css">
     <link rel="stylesheet" href="css/mobile-menu.css" media="screen and (max-width: 992px)">
-    <script src="js/mobile-menu.js" defer></script>
 </head>
 <body>
 
@@ -17,6 +16,11 @@
             <a href="index.html" class="logo-container">
                 <img src="image/logo.jpg" alt="明德車業 Logo" class="logo-img">
             </a>
+            <button class="menu-toggle" aria-label="選單">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
             <nav class="nav-list">
                 <a href="index.html">首頁</a>
                 <a href="products.html">現車庫存</a>
@@ -35,10 +39,10 @@
         </div>
 
         <div class="filter-group">
-            <button class="filter-btn active" onclick="filterBikes('all')">全部展示</button>
-            <button class="filter-btn" onclick="filterBikes('kawasaki')">KAWASAKI</button>
-            <button class="filter-btn" onclick="filterBikes('kymco')">KYMCO</button>
-            <button class="filter-btn" onclick="filterBikes('used')">二手全車款</button>
+            <button class="filter-btn active" onclick="filterBikes('all', event)">全部展示</button>
+            <button class="filter-btn" onclick="filterBikes('kawasaki', event)">KAWASAKI</button>
+            <button class="filter-btn" onclick="filterBikes('kymco', event)">KYMCO</button>
+            <button class="filter-btn" onclick="filterBikes('used', event)">二手全車款</button>
         </div>
 
         <div class="product-grid" id="bikeGrid">
@@ -129,9 +133,11 @@
                 <div class="footer-column">
                     <h4>服務項目</h4>
                     <ul>
+                        <li><a href="index.html">關於我們</a></li>
                         <li><a href="products.html">現車庫存</a></li>
                         <li><a href="booking-ride.html">預約試乘</a></li>
                         <li><a href="booking-service.html">預約保養</a></li>
+                        <li><a href="event-signup.html">活動報名</a></li>
                     </ul>
                 </div>
                 <div class="footer-column">
@@ -159,11 +165,27 @@
         </section>
         
     <script>
-        function filterBikes(brand) {
+        // Load mobile menu script after the page has loaded
+        window.addEventListener('load', function() {
+            const script = document.createElement('script');
+            script.src = 'js/mobile-menu.js';
+            document.body.appendChild(script);
+        });
+
+        function filterBikes(brand, event) {
+            // 防止事件冒泡
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+
             // 切換按鈕樣式
             const btns = document.querySelectorAll('.filter-btn');
             btns.forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            
+            // 添加active類到當前點擊的按鈕
+            const target = event ? event.currentTarget : document.querySelector(`.filter-btn[onclick*="${brand}"]`);
+            target.classList.add('active');
 
             // 執行篩選邏輯
             const cards = document.querySelectorAll('.product-card');
@@ -178,7 +200,12 @@
                 }
             });
         }
-    </script>
 
+        // 頁面加載時顯示所有產品
+        document.addEventListener('DOMContentLoaded', function() {
+            filterBikes('all');
+        });
+    </script>
+    <script src="js/mobile-menu.js"></script>
 </body>
 </html>
