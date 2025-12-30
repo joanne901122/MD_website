@@ -5,28 +5,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>明德車業 MINGDE MOTOR | Kawasaki 高雄旗艦</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/mobile-menu.css">
+    <script src="js/mobile-menu.js" defer></script>
+    <style>
+        /* 確保所有文字都使用標楷體 */
+        body, button, input, select, textarea, h1, h2, h3, h4, h5, h6, p, a, span, div {
+            font-family: "標楷體", "DFKai-SB", "BiauKai", serif !important;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+    </style>
 </head>
 <body>
     <header>
-        <a href="index.html" class="logo-container">
-            <img src="image/logo.jpg" alt="明德車業 Logo" class="logo-img">
-        </a>
-        <nav class="nav-list">
-            <a href="index.html">首頁</a>
-            <a href="products.html">現車庫存</a>
-            <a href="booking-ride.html" class="nav-btn ride">預約試乘</a>
-            <a href="booking-service.html" class="nav-btn">保養預約</a>
-            <a href="event-signup.html" style="margin-left: 20px; text-decoration: none; color: #000; font-weight: bold;">活動報名</a>
-        </nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo-container">
+                <img src="image/logo.jpg" alt="明德車業 Logo" class="logo-img">
+            </a>
+            <button class="menu-toggle" aria-label="選單">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <nav class="nav-list">
+                <a href="index.html">首頁</a>
+                <a href="products.html">現車庫存</a>
+                <a href="booking-ride.html" class="nav-btn ride">預約試乘</a>
+                <a href="booking-service.html" class="nav-btn">保養預約</a>
+                <a href="event-signup.html" class="nav-link">活動報名</a>
+            </nav>
+            <div class="overlay"></div>
+        </div>
     </header>
 
-    <main>
-        <section class="hero-plaza">
+    <main style="margin-top: 80px;">
+        <section class="hero-section hero-plaza overlay-dark">
             <div class="hero-content">
-                <h2>THE SPIRIT OF PERFORMANCE</h2>
-                <h1>明德車業</h1>
-                <p>追求極致性能，守護您的每一趟冒險</p>
+                <h2 class="hero-subtitle">THE SPIRIT OF PERFORMANCE</h2>
+                <h1 class="hero-title">明德車業</h1>
+                <p class="hero-description">追求極致性能，守護您的每一趟冒險</p>
                 <div class="hero-btns">
                     <a href="products.html" class="btn-primary">瀏覽在庫車輛</a>
                     <a href="booking-ride.html" class="btn-outline">立即預約試乘</a>

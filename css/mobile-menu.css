@@ -1,0 +1,264 @@
+/* ====================================
+   行動選單樣式 (Mobile Menu Styles)
+   ==================================== */
+
+/* 漢堡選單按鈕 */
+.menu-toggle {
+    display: none; /* 預設隱藏 */
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 21px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    z-index: 1000;
+    margin-left: 15px;
+}
+
+.menu-toggle span {
+    display: block;
+    width: 100%;
+    height: 3px;
+    background-color: var(--plaza-black);
+    transition: all 0.3s ease;
+}
+
+.menu-toggle.active span:nth-child(1) {
+    transform: translateY(9px) rotate(45deg);
+}
+
+.menu-toggle.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.menu-toggle.active span:nth-child(3) {
+    transform: translateY(-9px) rotate(-45deg);
+}
+
+/* 導航容器 */
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 0 15px;
+}
+
+/* 導航連結 */
+.nav-list {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-list a {
+    color: var(--plaza-black);
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: bold;
+    transition: color 0.3s ease;
+    padding: 10px 15px;
+    display: block;
+}
+
+.nav-list a:hover {
+    color: var(--kawa-green);
+}
+
+/* 行動裝置樣式 */
+@media (max-width: 992px) {
+    .menu-toggle {
+        display: flex;
+    }
+    
+    .nav-list {
+        position: fixed;
+        top: 0;
+        right: -300px;
+        width: 300px;
+        height: 100vh;
+        background: var(--white);
+        flex-direction: column;
+        justify-content: flex-start;
+        padding: 100px 30px 30px;
+        box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+        transition: right 0.3s ease-in-out;
+        z-index: 999;
+    }
+    
+    .nav-list.active {
+        right: 0;
+    }
+    
+    .nav-list a {
+        padding: 15px 0;
+        border-bottom: 1px solid var(--line);
+        font-size: 1.2rem;
+    }
+    
+    .nav-list a:last-child {
+        border-bottom: none;
+    }
+}
+
+/* 覆蓋層 */
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 998;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+.nav-list {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    align-items: center;
+}
+
+.nav-list a {
+    color: #000;
+    text-decoration: none;
+    padding: 10px 15px;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.nav-list a:hover {
+    color: var(--kawa-green);
+}
+
+.nav-btn {
+    background-color: var(--kawa-green);
+    color: white !important;
+    border-radius: 4px;
+    margin-left: 10px;
+    padding: 8px 15px !important;
+}
+
+.nav-btn.ride {
+    background-color: #ff6b00;
+}
+
+/* Mobile Styles */
+@media (max-width: 992px) {
+    .nav-list a {
+        font-size: 1.1em;
+        padding: 15px 20px;
+        display: block;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+        margin: 0;
+    }
+    .menu-toggle {
+        display: flex;
+    }
+    
+    .nav-list {
+        display: none;
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 80%;
+        max-width: 300px;
+        height: 100vh;
+        background-color: white;
+        flex-direction: column;
+        justify-content: flex-start;
+        padding: 80px 20px 20px;
+        box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+        transition: right 0.3s ease-in-out;
+        z-index: 999;
+    }
+    
+    .nav-list.active {
+        display: flex;
+        right: 0;
+    }
+    
+    .nav-list a {
+        width: 100%;
+        padding: 15px 0;
+        border-bottom: 1px solid #eee;
+        margin: 0;
+        text-align: left;
+    }
+    
+    .nav-btn {
+        margin: 10px 0 0;
+        text-align: center;
+        width: 100%;
+    }
+    
+    .overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 900;
+    }
+    
+    .overlay.active {
+        display: block;
+    }
+    
+    /* Adjust header for mobile */
+    header {
+        padding: 10px 5% !important;
+    }
+}
+
+/* Desktop styles - ensure menu is visible by default */
+@media (min-width: 993px) {
+    .menu-toggle {
+        display: none !important;
+    }
+    
+    .nav-list {
+        display: flex !important;
+    }
+    
+    .overlay {
+        display: none !important;
+    }
+    
+    /* Reset any mobile styles that might affect desktop */
+    .nav-list {
+        position: static !important;
+        width: auto !important;
+        height: auto !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        flex-direction: row !important;
+    }
+    
+    .nav-list a {
+        width: auto !important;
+        padding: 10px 15px !important;
+        border-bottom: none !important;
+        text-align: center !important;
+    }
+    
+    .nav-btn {
+        width: auto !important;
+        margin: 0 0 0 10px !important;
+    }
+}
