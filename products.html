@@ -32,6 +32,7 @@
             <button class="filter-btn active" onclick="filterBikes('all')">全部展示</button>
             <button class="filter-btn" onclick="filterBikes('kawasaki')">KAWASAKI</button>
             <button class="filter-btn" onclick="filterBikes('kymco')">KYMCO</button>
+            <button class="filter-btn" onclick="filterBikes('used')">二手全車款</button>
         </div>
 
         <div class="product-grid" id="bikeGrid">
@@ -86,6 +87,34 @@
                     <a href="booking-ride.html" class="btn-view">預約賞車</a>
                 </div>
             </div>
+
+            <!-- 二手車款 -->
+            <div class="product-card used" data-brand="used">
+                <img src="https://images.unsplash.com/photo-1558981806-ede5b310f72e?q=80&w=800" alt="Used Bike 1" class="product-img">
+                <div class="product-info">
+                    <span class="product-brand">HONDA</span>
+                    <h3 class="product-name">CBR600RR</h3>
+                    <span class="product-price">二手價 $258,000</span>
+                    <div class="product-specs">
+                        <span>599cc</span> | <span>2019年式</span> | <span>里程12,500km</span>
+                    </div>
+                    <a href="booking-ride.html" class="btn-view">預約看車</a>
+                </div>
+            </div>
+
+            <div class="product-card used" data-brand="used">
+                <img src="https://images.unsplash.com/photo-1517845164171-efb0347a8c4e?q=80&w=800" alt="Used Bike 2" class="product-img">
+                <div class="product-info">
+                    <span class="product-brand">YAMAHA</span>
+                    <h3 class="product-name">MT-07</h3>
+                    <span class="product-price">二手價 $198,000</span>
+                    <div class="product-specs">
+                        <span>689cc</span> | <span>2020年式</span> | <span>里程8,200km</span>
+                    </div>
+                    <a href="booking-ride.html" class="btn-view">預約看車</a>
+                </div>
+            </div>
+
         </div>
     </main>
 
@@ -133,7 +162,10 @@
             // 執行篩選邏輯
             const cards = document.querySelectorAll('.product-card');
             cards.forEach(card => {
-                if (brand === 'all' || card.getAttribute('data-brand') === brand) {
+                const cardBrand = card.getAttribute('data-brand');
+                if (brand === 'all' || 
+                    (brand === 'used' && card.classList.contains('used')) ||
+                    (brand !== 'used' && cardBrand === brand && !card.classList.contains('used'))) {
                     card.style.display = 'block';
                 } else {
                     card.style.display = 'none';
