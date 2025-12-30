@@ -4,33 +4,88 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>活動報名 | 明德車業 MINGDE MOTOR</title>
+    <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/event-signup.css">
+    <link rel="stylesheet" href="css/booking-common.css">
+    <link rel="stylesheet" href="css/mobile-menu.css" media="screen and (max-width: 992px)">
+    <style>
+        /* 確保所有文字都使用標楷體 */
+        body, button, input, select, textarea, h1, h2, h3, h4, h5, h6, p, a, span, div {
+            font-family: "標楷體", "DFKai-SB", "BiauKai", serif !important;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        /* 活動報名表特定樣式 */
+        .booking-card h2::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--kawa-green);
+        }
+        
+        .payment-info {
+            background: #f8f8f8;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .payment-info h4 {
+            margin-top: 0;
+            color: var(--plaza-black);
+            font-size: var(--text-lg);
+        }
+        
+        .vehicle-group {
+            background: #f5f5f5;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+        
+        .btn-add-vehicle {
+            margin-top: 1rem;
+            background-color: #666 !important;
+        }
+        
+        .btn-add-vehicle:hover {
+            background-color: #555 !important;
+        }
+    </style>
 </head>
 <body>
     <header>
-        <a href="index.html" class="logo-container">
-            <img src="image/logo.jpg" alt="明德車業 Logo" class="logo-img">
-        </a>
-        <nav class="nav-list">
-            <a href="index.html">首頁</a>
-            <a href="products.html">現車庫存</a>
-            <a href="booking-ride.html" class="nav-btn ride">預約試乘</a>
-            <a href="booking-service.html" class="nav-btn">保養預約</a>
-            <a href="event-signup.html">活動報名</a>
-        </nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo-container">
+                <img src="image/logo.jpg" alt="明德車業 Logo" class="logo-img">
+            </a>
+            <nav class="nav-list">
+                <a href="index.html">首頁</a>
+                <a href="products.html">現車庫存</a>
+                <a href="booking-ride.html" class="nav-btn ride">預約試乘</a>
+                <a href="booking-service.html" class="nav-btn">保養預約</a>
+                <a href="event-signup.html">活動報名</a>
+            </nav>
+            <div class="overlay"></div>
+        </div>
     </header>
 
-    <main class="signup-section">
-        <div class="signup-card">
+    <main class="booking-section">
+        <div class="booking-card">
             <h2>活動報名</h2>
-            <p style="color: #66cc33; font-weight: bold;">FAMILY & GROUP REGISTRATION</p>
+            <span class="booking-subtitle">FAMILY & GROUP REGISTRATION</span>
             
             <div class="payment-info">
                 <h4>💰 轉帳資訊</h4>
                 <p>銀行：822 中國信託 (九如分行)</p>
                 <p>帳號：12345-67890-123 | 戶名：明德車業</p>
-                <p style="font-size: 0.85rem; color: #888; margin-top: 10px;">※ 多人報名可統一匯款，請於備註註明總人數。</p>
+                <p style="font-size: 0.9rem; color: #888; margin: 10px 0 0 0;">※ 多人報名可統一匯款，請於備註註明總人數。</p>
             </div>
 
             <!-- 活動選擇區域 -->
@@ -41,7 +96,7 @@
             </div>
 
             <form id="signupForm" class="form-container" onsubmit="alert('報名已送出！'); return true;">
-                <div id="eventInfo" style="background: #f8f8f8; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: none;">
+                <div id="eventInfo" style="background: #f8f8f8; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: none; border-left: none !important;">
                     <h3 id="eventTitle" style="margin: 0 0 10px 0; color: #333;"></h3>
                     <p id="eventDate" style="margin: 0 0 10px 0; color: #666;"></p>
                     <p id="eventDescription" style="margin: 0; color: #444; line-height: 1.5;"></p>

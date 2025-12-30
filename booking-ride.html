@@ -4,55 +4,87 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>預約試乘 | 明德車業 MINGDE MOTOR</title>
+    <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/booking-common.css">
+    <link rel="stylesheet" href="css/mobile-menu.css" media="screen and (max-width: 992px)">
     <style>
-        /* 確保所有文字都使用標楷體 */
-        body, button, input, select, textarea, h1, h2, h3, h4, h5, h6, p, a, span, div {
-            font-family: "標楷體", "DFKai-SB", "BiauKai", serif !important;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-        
         /* 預約表單標題樣式 */
         .booking-card h2 {
             text-align: center;
-            font-size: 2.2rem;
-            margin-bottom: 1rem;
-            padding-bottom: 1rem;
+            margin: 0 0 1.25rem 0;
+            padding-bottom: 0.8rem;
             border-bottom: 2px solid var(--kawa-green);
         }
         
+        /* 副標題樣式 */
         .booking-subtitle {
             display: block;
             text-align: center;
-            color: #666;
+            color: var(--kawa-green);
             font-size: 1.1rem;
-            margin-bottom: 2rem;
+            margin: 0 0 2rem 0;
             letter-spacing: 2px;
             text-transform: uppercase;
+            font-weight: normal;
+        }
+        
+        /* 表單元素樣式 */
+        .booking-form {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        .booking-form .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .booking-form .form-row > * {
+            flex: 1;
+        }
+        
+        .btn-submit {
+            font-size: 1rem !important;
+            padding: 12px 24px;
+            background-color: var(--kawa-green);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-submit:hover {
+            background-color: #4a8f29;
         }
     </style>
 </head>
 <body>
 
     <header>
-        <a href="index.html" class="logo-container">
-            <img src="image/logo.jpg" alt="明德車業 Logo" class="logo-img">
-        </a>
-        <nav class="nav-list">
-            <a href="index.html">首頁</a>
-            <a href="products.html">現車庫存</a>
-            <a href="booking-ride.html" class="nav-btn ride">預約試乘</a>
-            <a href="booking-service.html" class="nav-btn">保養預約</a>
-            <a href="event-signup.html">活動報名</a>
-        </nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo-container">
+                <img src="image/logo.jpg" alt="明德車業 Logo" class="logo-img">
+            </a>
+            <nav class="nav-list">
+                <a href="index.html">首頁</a>
+                <a href="products.html">現車庫存</a>
+                <a href="booking-ride.html" class="nav-btn ride">預約試乘</a>
+                <a href="booking-service.html" class="nav-btn">保養預約</a>
+                <a href="event-signup.html">活動報名</a>
+            </nav>
+            <div class="overlay"></div>
+        </div>
     </header>
 
     <main class="booking-section">
         <div class="booking-card">
             <h2>預約試乘</h2>
-            <span class="booking-subtitle">BOOKING YOUR RIDE</span>
+            <span class="booking-subtitle" style="font-weight: bold;">BOOKING YOUR RIDE</span>
             
             <form class="booking-form" onsubmit="alert('預約成功，我們將與您聯繫！'); return true;">
                 <input type="text" placeholder="您的姓名" required>

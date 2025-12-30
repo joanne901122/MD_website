@@ -4,22 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>維修保養預約 | 明德車業 MINGDE MOTOR</title>
+    <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/booking-common.css">
+    <link rel="stylesheet" href="css/mobile-menu.css" media="screen and (max-width: 992px)">
+    <style>
+        /* 確保所有文字都使用標楷體 */
+        body, button, input, select, textarea, h1, h2, h3, h4, h5, h6, p, a, span, div {
+            font-family: "標楷體", "DFKai-SB", "BiauKai", serif !important;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+    </style>
 </head>
 <body>
 
     <header>
-        <a href="index.html" class="logo-container">
-            <img src="image/logo.jpg" alt="明德車業 Logo" class="logo-img">
-        </a>
-        <nav class="nav-list">
-            <a href="index.html">首頁</a>
-            <a href="products.html">現車庫存</a>
-            <a href="booking-ride.html" class="nav-btn ride">預約試乘</a>
-            <a href="booking-service.html" class="nav-btn">保養預約</a>
-            <a href="event-signup.html">活動報名</a>
-        </nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo-container">
+                <img src="image/logo.jpg" alt="明德車業 Logo" class="logo-img">
+            </a>
+            <nav class="nav-list">
+                <a href="index.html">首頁</a>
+                <a href="products.html">現車庫存</a>
+                <a href="booking-ride.html" class="nav-btn ride">預約試乘</a>
+                <a href="booking-service.html" class="nav-btn">保養預約</a>
+                <a href="event-signup.html">活動報名</a>
+            </nav>
+            <div class="overlay"></div>
+        </div>
     </header>
 
     <main class="booking-section">
@@ -27,7 +40,7 @@
             <h2>維修保養預約</h2>
             <span class="booking-subtitle">SERVICE & REPAIR</span>
             
-            <form class="booking-form" onsubmit="alert('保養預約已送出，我們將盡快與您聯繫！'); return true;">
+            <form class="booking-form" onsubmit="alert('預約成功，我們將與您聯繫！'); return true;">
                 <input type="text" placeholder="您的姓名 / 車主稱呼" required>
                 <input type="tel" placeholder="聯絡電話" required>
                 <input type="text" placeholder="車型名稱 (例如: Ninja 650 / AK550)" required>

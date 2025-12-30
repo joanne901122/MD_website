@@ -41,6 +41,7 @@ header {
     align-items: center;
     text-decoration: none;
     color: inherit;
+    position: relative;
 }
 
 .logo-img {
