@@ -1,0 +1,182 @@
+/* ====================================
+   共用元件樣式 (Shared Components)
+   ==================================== */
+
+/* 主視覺區 (Hero Section) */
+.hero-section {
+    height: 100vh;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #fff;
+    position: relative;
+    margin-top: 80px; /* 給固定導航欄留出空間 */
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    padding: 0 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.hero-title {
+    font-size: 5rem;
+    letter-spacing: 10px;
+    margin-bottom: 1.5rem;
+    text-shadow: 2px 4px 10px rgba(0,0,0,0.3);
+    font-weight: bold;
+}
+
+.hero-subtitle {
+    font-size: 1.8rem;
+    letter-spacing: 5px;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    font-weight: 300;
+}
+
+.hero-description {
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+    margin-bottom: 3rem;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+}
+
+.hero-section.overlay-dark {
+    background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.5));
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    padding: 0 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.hero-content h1 {
+    font-size: 6.5rem;
+    letter-spacing: 20px;
+    margin-bottom: 30px;
+    text-shadow: 2px 4px 10px rgba(0,0,0,0.3);
+    line-height: 1.2;
+}
+
+.hero-content p {
+    font-size: 2.5rem;
+    margin-bottom: 80px;
+    letter-spacing: 5px;
+    line-height: 1.4;
+}
+
+.hero-btns {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* 按鈕樣式 */
+.btn {
+    padding: 15px 40px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: var(--transition);
+    display: inline-block;
+    text-align: center;
+    cursor: pointer;
+    margin: 5px;
+    min-width: 200px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-primary {
+    background-color: var(--kawa-green);
+    color: var(--plaza-black);
+    border: 2px solid var(--kawa-green);
+}
+
+.btn-primary:hover {
+    background-color: transparent;
+    color: var(--white);
+}
+
+.btn-outline {
+    background-color: transparent;
+    color: var(--white);
+    border: 2px solid var(--white);
+}
+
+.btn-outline:hover {
+    background-color: var(--white);
+    color: var(--plaza-black);
+}
+
+/* 響應式調整 */
+@media (max-width: 992px) {
+    .hero-content h1 {
+        font-size: 5rem;
+        letter-spacing: 15px;
+    }
+    
+    .hero-content p {
+        font-size: 2rem;
+        margin-bottom: 60px;
+    }
+    
+    .btn {
+        padding: 16px 40px;
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-content h1 {
+        font-size: 3.5rem;
+        letter-spacing: 10px;
+    }
+    
+    .hero-content p {
+        font-size: 1.5rem;
+        margin-bottom: 40px;
+    }
+    
+    .hero-btns {
+        flex-direction: column;
+        gap: 15px;
+        align-items: center;
+    }
+    
+    .btn {
+        width: 80%;
+        max-width: 300px;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-content h1 {
+        font-size: 2.5rem;
+        letter-spacing: 5px;
+    }
+    
+    .hero-content p {
+        font-size: 1.2rem;
+        margin-bottom: 30px;
+    }
+    
+    .btn {
+        padding: 12px 30px;
+        font-size: 1rem;
+    }
+}
