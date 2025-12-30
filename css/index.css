@@ -1,0 +1,146 @@
+/* index.css - 首頁專屬樣式 */
+
+/* 確保活動資訊區塊符合您的設計風格 */
+.events-container {
+    padding: 80px 5%;
+    background-color: #ffffff;
+}
+
+.events-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.section-title {
+    font-size: 2.5rem;
+    letter-spacing: 10px;
+    margin-bottom: 10px;
+    color: #000;
+}
+
+.section-subtitle {
+    color: #66cc33;
+    font-weight: bold;
+    letter-spacing: 4px;
+}
+
+/* 活動卡片網格 */
+.events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.event-card {
+    background: #fafafa;
+    border: 1px solid #eee;
+    position: relative;
+    padding: 50px 30px 30px;
+    transition: 0.3s;
+    text-align: left;
+}
+
+.event-card:hover {
+    transform: translateY(-10px);
+    border-color: #66cc33;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.05);
+}
+
+.event-tag {
+    position: absolute;
+    top: 0; 
+    left: 0;
+    background: #000;
+    color: #fff;
+    padding: 5px 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.event-date {
+    color: #66cc33;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.event-body h3 {
+    font-size: 1.4rem;
+    margin-bottom: 15px;
+    color: #000;
+}
+
+.event-body p {
+    color: #666;
+    font-size: 1.1rem;
+    margin-bottom: 25px;
+    line-height: 1.6;
+}
+
+/* 按鈕風格統一：黑底白字 */
+.event-link {
+    display: block;
+    background: #000;
+    color: #fff;
+    text-align: center;
+    padding: 12px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.event-link:hover {
+    background: #66cc33;
+    color: #000;
+}
+
+/* 主視覺區四按鈕排版優化 */
+.hero-btns {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 30px;
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+    .section-title, 
+    .booking-card h2, 
+    .section-header h2, 
+    .signup-card h2 {
+        font-size: 2rem !important;
+        letter-spacing: 5px !important;
+        margin-bottom: 10px !important;
+    }
+
+    .section-subtitle, 
+    .booking-subtitle, 
+    .signup-subtitle {
+        font-size: 1rem !important;
+        letter-spacing: 2px !important;
+        margin-bottom: 30px !important;
+    }
+
+    .nav-list {
+        gap: 12px; 
+    }
+    
+    .nav-list a {
+        font-size: 0.9rem;
+    }
+    
+    .nav-btn {
+        padding: 5px 10px;
+    }
+
+    section {
+        padding: 120px 15px 60px !important; 
+    }
+    
+    .booking-card, .signup-card {
+        padding: 30px 20px !important;
+    }
+}

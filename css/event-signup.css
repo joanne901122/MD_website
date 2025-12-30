@@ -1,0 +1,126 @@
+/* event-signup.css - 活動報名頁面專屬樣式 */
+
+.signup-section {
+    padding: 150px 20px 80px;
+    display: flex;
+    justify-content: center;
+}
+
+.signup-card { 
+    background: #fff;
+    width: 100%;
+    max-width: 700px; 
+    padding: 50px;
+    border: 1px solid #eee;
+    text-align: center; 
+}
+
+/* 轉帳資訊 */
+.payment-info {
+    background-color: #fafafa;
+    border: 1px dashed #66cc33;
+    padding: 20px;
+    margin: 30px 0;
+    text-align: left;
+}
+
+/* 動態車輛區塊樣式 */
+.vehicle-group {
+    background: #fdfdfd;
+    border: 1px solid #eee;
+    padding: 20px;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.vehicle-group-title {
+    font-weight: bold;
+    color: #66cc33;
+    margin-bottom: 15px;
+    display: block;
+}
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-container input {
+    padding: 15px;
+    font-family: "標楷體";
+    font-size: 1.1rem;
+    text-align: center;
+    border: 1px solid #ddd;
+    width: 100%;
+}
+
+/* 核心要求：黑底白字選單與按鈕 */
+.form-group select {
+    background-color: #000 !important;
+    color: #fff !important;
+    width: 100%;
+    padding: 15px;
+    font-family: "標楷體";
+    font-size: 1.1rem;
+    text-align-last: center;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-add-vehicle {
+    background: #f4f4f4;
+    color: #333;
+    border: 1px solid #ddd;
+    padding: 10px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    transition: 0.3s;
+}
+
+.btn-add-vehicle:hover {
+    background: #eee;
+}
+
+.btn-submit { 
+    background: #000;
+    color: #fff;
+    padding: 18px;
+    border: none; 
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    letter-spacing: 5px;
+    transition: 0.3s;
+}
+
+.btn-submit:hover {
+    background: #66cc33;
+    color: #000;
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+    .signup-card {
+        padding: 30px 20px !important;
+    }
+    
+    .signup-card h2 {
+        font-size: 2rem !important;
+        letter-spacing: 5px !important;
+    }
+    
+    .signup-subtitle {
+        font-size: 1rem !important;
+        letter-spacing: 2px !important;
+        margin-bottom: 30px !important;
+    }
+    
+    .vehicle-group {
+        padding: 15px;
+    }
+    
+    .form-container input {
+        font-size: 1rem;
+    }
+}
