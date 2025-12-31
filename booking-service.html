@@ -47,12 +47,12 @@
             <h2>維修保養預約</h2>
             <span class="booking-subtitle">SERVICE & REPAIR</span>
             
-            <form class="booking-form" onsubmit="alert('預約成功，我們將與您聯繫！'); return true;">
-                <input type="text" placeholder="您的姓名 / 車主稱呼" required>
-                <input type="tel" placeholder="聯絡電話" required>
-                <input type="text" placeholder="車型名稱 (例如: Ninja 650 / AK550)" required>
+            <form class="booking-form" id="serviceBookingForm">
+                <input type="text" name="name" placeholder="您的姓名 / 車主稱呼" required>
+                <input type="tel" name="phone" placeholder="聯絡電話" required>
+                <input type="text" name="bikeModel" placeholder="車型名稱 (例如: Ninja 650 / AK550)" required>
 
-                <select id="serviceType" required>
+                <select id="serviceType" required onchange="checkServiceType()">
                     <option value="" disabled selected>— 請選擇保養/維修項目 —</option>
                     <option value="check_condition" style="color: var(--kawa-green); font-weight: bold;">⚠️ 不清楚，請幫我看看車況 (現場診斷)</option>
                     
@@ -80,8 +80,11 @@
                     </select>
                 </div>
                 <div id="dateError" class="date-hint">⚠️ 週日公休，請選擇其他日期</div>
+                <div id="advanceNotice" class="date-hint" style="display: none; color: #ff6b6b; margin-bottom: 10px;">
+                    ⚠️ 建議：為確保服務品質，請至少提前2天預約
+                </div>
 
-                <textarea placeholder="請簡述您的車況（例如：有異音、漏油、發動困難等）" rows="3"></textarea>
+                <textarea name="notes" placeholder="請簡述您的車況（例如：有異音、漏油、發動困難等）" rows="3"></textarea>
                 <button type="submit" class="btn-submit">確認提交預約</button>
             </form>
         </div>
@@ -124,17 +127,246 @@
         </section>
 
     <script>
-        // 設定最小預約日期為明天
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        document.getElementById('bookDate').setAttribute('min', tomorrow.toISOString().split('T')[0]);
+        // 檢查服務類型，顯示/隱藏提前預約提示
+        function checkServiceType() {
+            const serviceType = document.getElementById('serviceType').value;
+            const advanceNotice = document.getElementById('advanceNotice');
+            
+            // 如果不是「不清楚車況」或「機油更換」，則顯示提前預約提示
+            if (serviceType !== 'check_condition' && serviceType !== 'oil' && serviceType !== '') {
+                advanceNotice.style.display = 'block';
+                
+                const selectedDate = new Date(document.getElementById('bookDate').value);
+                const today = new Date();
+                const twoDaysLater = new Date(today);
+                twoDaysLater.setDate(today.getDate() + 2);
+                
+                if (selectedDate < twoDaysLater) {
+                    // 如果選擇的日期少於2天後，自動調整到2天後
+                    twoDaysLater.setHours(0, 0, 0, 0);
+                    document.getElementById('bookDate').min = twoDaysLater.toISOString().split('T')[0];
+                    document.getElementById('bookDate').value = twoDaysLater.toISOString().split('T')[0];
+                    generate24HSlots();
+                }
+            } else {
+                advanceNotice.style.display = 'none';
+            }
+        }
 
+        // 頁面載入時初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('serviceBookingForm');
+            
+            // 初始化LocalStorage（如果不存在）
+            if (!localStorage.getItem('formSubmissions')) {
+                localStorage.setItem('formSubmissions', JSON.stringify([]));
+            }
+            
+            // 保存表單數據到 localStorage
+            function saveFormData(formData) {
+                try {
+                    console.log('開始保存表單數據:', formData);
+                    
+                    // 確保 formData 是有效的對象
+                    if (!formData || typeof formData !== 'object') {
+                        console.error('無效的表單數據:', formData);
+                        return false;
+                    }
+                    
+                    // 讀取現有數據
+                    let submissions = [];
+                    try {
+                        const savedData = localStorage.getItem('formSubmissions');
+                        console.log('從 localStorage 讀取的原始數據:', savedData);
+                        
+                        if (savedData) {
+                            submissions = JSON.parse(savedData);
+                            console.log('解析後的現有數據:', submissions);
+                            
+                            if (!Array.isArray(submissions)) {
+                                console.warn('現有數據不是數組，將重置為空數組');
+                                submissions = [];
+                            }
+                        }
+                    } catch (e) {
+                        console.error('讀取現有數據時出錯，將使用空數組:', e);
+                        submissions = [];
+                    }
+                    
+                    // 確保表單數據有必要的字段
+                    if (!formData.id) {
+                        formData.id = 'SV' + Date.now();
+                    }
+                    if (!formData.submittedAt) {
+                        formData.submittedAt = new Date().toISOString();
+                    }
+                    
+                    // 添加新數據
+                    submissions.push(formData);
+                    console.log('準備保存的完整數據:', submissions);
+                    
+                    // 保存回 localStorage
+                    try {
+                        localStorage.setItem('formSubmissions', JSON.stringify(submissions));
+                        console.log('數據已成功保存到 localStorage');
+                        
+                        // 立即驗證
+                        const verifyData = JSON.parse(localStorage.getItem('formSubmissions') || '[]');
+                        console.log('驗證保存的數據:', verifyData);
+                        
+                        // 觸發自定義事件，通知其他頁面數據已更新
+                        const event = new CustomEvent('storageUpdated', {
+                            detail: { key: 'formSubmissions', value: verifyData }
+                        });
+                        window.dispatchEvent(event);
+                        
+                        // 觸發 storage 事件（用於其他標籤頁）
+                        window.dispatchEvent(new StorageEvent('storage', {
+                            key: 'formSubmissions',
+                            newValue: JSON.stringify(verifyData),
+                            oldValue: localStorage.getItem('formSubmissions'),
+                            storageArea: localStorage,
+                            url: window.location.href
+                        }));
+                        
+                        return true;
+                    } catch (e) {
+                        console.error('保存到 localStorage 時出錯:', e);
+                        return false;
+                    }
+                } catch (error) {
+                    console.error('保存表單數據時發生未預期的錯誤:', error);
+                    return false;
+                }
+            }
+
+            // 表單提交處理
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                console.log('表單提交事件觸發');
+                
+                // 收集表單數據
+                const bookingDate = document.getElementById('bookDate').value;
+                const bookingTime = document.getElementById('timeSelect').value;
+                
+                console.log('表單數據:', {
+                    bookingDate,
+                    bookingTime,
+                    name: form.querySelector('input[name="name"]').value,
+                    phone: form.querySelector('input[name="phone"]').value,
+                    bikeModel: form.querySelector('input[name="bikeModel"]').value,
+                    serviceType: document.getElementById('serviceType').value,
+                    notes: form.querySelector('textarea[name="notes"]').value
+                });
+                
+                // 驗證必填欄位
+                if (!form.checkValidity()) {
+                    console.log('表單驗證失敗');
+                    form.reportValidity();
+                    return false;
+                }
+                
+                // 驗證預約時間
+                if (!isValidBookingTime(bookingDate, bookingTime)) {
+                    console.log('預約時間驗證失敗');
+                    return false;
+                }
+                
+                console.log('表單驗證通過，開始處理提交');
+                // 如果通過所有驗證，才繼續處理表單提交
+                processFormSubmission(bookingDate, bookingTime);
+                return false;
+            });
+            
+            // 處理表單提交的函數
+            function processFormSubmission(bookingDate, bookingTime) {
+                
+                const formData = {
+                    id: 'SV' + Date.now().toString(), // 使用時間戳記確保唯一ID
+                    type: 'maintenance',
+                    name: form.querySelector('input[name="name"]').value,
+                    phone: form.querySelector('input[name="phone"]').value,
+                    bikeModel: form.querySelector('input[name="bikeModel"]').value,
+                    serviceType: document.getElementById('serviceType').value,
+                    date: bookingDate,  // 使用 date 而不是 bookingDate
+                    time: bookingTime,  // 使用 time 而不是 bookingTime
+                    notes: form.querySelector('textarea[name="notes"]').value,
+                    status: 'pending',
+                    submittedAt: new Date().toISOString(),
+                    price: '0', // 預設0元，後台可修改
+                    serviceDetails: '' // 新增服務詳數字段
+                };
+                
+                // 保存到 localStorage
+                if (saveFormData(formData)) {
+                    // 顯示成功消息並重置表單
+                    alert('預約成功，我們將與您聯繫！');
+                    form.reset();
+                } else {
+                    alert('預約失敗，請稍後再試或聯繫客服。');
+                }
+            }
+            
+            // 設置最小預約日期為今天
+            const today = new Date();
+            document.getElementById('bookDate').setAttribute('min', today.toISOString().split('T')[0]);
+            
+            // 生成初始時間選項
+            generate24HSlots();
+            
+            // 監聽日期變更事件
+            document.getElementById('bookDate').addEventListener('change', generate24HSlots);
+        });
+        
+        // 檢查選擇的時間是否有效（用於當天預約）
+        function isValidBookingTime(selectedDate, selectedTime) {
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const isToday = selectedDate === today.toISOString().split('T')[0];
+            
+            // 如果不是今天，時間都有效
+            if (!isToday) return true;
+            
+            // 將選擇的時間轉換成分鐘數
+            const [hours, minutes] = selectedTime.split(':').map(Number);
+            const selectedTimeInMinutes = hours * 60 + minutes;
+            
+            // 計算當前時間30分鐘後的時間
+            const minTime = new Date(now.getTime() + 30 * 60000);
+            const minHours = minTime.getHours();
+            const minMinutes = minTime.getMinutes();
+            const minTimeInMinutes = minHours * 60 + minMinutes;
+            
+            // 如果選擇的時間小於最小允許時間，顯示錯誤信息
+            if (selectedTimeInMinutes < minTimeInMinutes) {
+                const formattedMinTime = minHours.toString().padStart(2, '0') + ':' + 
+                                      minMinutes.toString().padStart(2, '0');
+                const currentTime = now.getHours().toString().padStart(2, '0') + ':' + 
+                                 now.getMinutes().toString().padStart(2, '0');
+                alert(`預約時間有誤！\n\n` +
+                      `請選擇至少30分鐘後的時間段\n` +
+                      `目前時間：${currentTime}\n` +
+                      `最快可預約時間：${formattedMinTime}`);
+                return false;
+            }
+            
+            return true;
+        }
+
+        // 生成可預約時間選項
         function generate24HSlots() {
             const dateInput = document.getElementById('bookDate');
             const timeSelect = document.getElementById('timeSelect');
             const dateError = document.getElementById('dateError');
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
             const selectedDate = new Date(dateInput.value);
+            
+            // 如果沒有選擇日期，則返回
+            if (!dateInput.value) return;
+            
             const day = selectedDate.getDay(); 
+            const isToday = selectedDate.getTime() === today.getTime();
 
             if (day === 0) {
                 dateError.style.display = 'block';
@@ -146,26 +378,47 @@
             }
 
             // 營業時間邏輯：平日到 20:30，週六到 18:00
-            let startHour = 9;
-            let startMin = 30;
-            let endHour = (day === 6) ? 18 : 20; 
-            let endMin = (day === 6) ? 0 : 30;
+            const startHour = 9;
+            const startMin = 30;
+            const endHour = (day === 6) ? 18 : 20; 
+            const endMin = (day === 6) ? 0 : 30;
+            
+            // 獲取當前時間（用於判斷是否為今天）
+            const currentHour = now.getHours();
+            const currentMinute = now.getMinutes();
+            const currentTimeInMinutes = currentHour * 60 + currentMinute;
 
             let options = '<option value="" disabled selected>預約時間</option>';
             
+            // 生成所有可能的時間段
             for (let h = startHour; h <= endHour; h++) {
                 for (let m = 0; m < 60; m += 30) {
+                    // 跳過營業時間外的時段
                     if (h === 9 && m < 30) continue;
                     if (h === endHour && m > endMin) continue;
+                    
+                    // 計算這個時間段的總分鐘數
+                    const slotTimeInMinutes = h * 60 + m;
+                    
+                    // 如果是今天，檢查時間是否已過或太接近現在
+                    if (isToday) {
+                        // 如果時間段在當前時間的30分鐘內，跳過
+                        if (slotTimeInMinutes <= currentTimeInMinutes + 30) {
+                            continue;
+                        }
+                    }
 
-                    let hh = h.toString().padStart(2, '0');
-                    let mm = m.toString().padStart(2, '0');
-                    let timeStr = `${hh}:${mm}`;
+                    const hh = h.toString().padStart(2, '0');
+                    const mm = m.toString().padStart(2, '0');
+                    const timeStr = `${hh}:${mm}`;
                     options += `<option value="${timeStr}">${timeStr}</option>`;
                 }
             }
             timeSelect.innerHTML = options;
         }
+    </script>
+    <script>
+        // 移除重複的 submitServiceForm 函數，因為我們已經有了更好的實現
     </script>
     <script src="js/mobile-menu.js"></script>
 </body>

@@ -91,7 +91,7 @@
             <h2>預約試乘</h2>
             <span class="booking-subtitle" style="font-weight: bold;">BOOKING YOUR RIDE</span>
             
-            <form class="booking-form" onsubmit="alert('預約成功，我們將與您聯繫！'); return true;">
+            <form class="booking-form" id="rideBookingForm">
                 <input type="text" placeholder="您的姓名" required>
                 <input type="tel" placeholder="聯絡電話" required>
 
@@ -226,7 +226,41 @@
         // 頁面載入完成後執行
         document.addEventListener('DOMContentLoaded', function() {
             autoSelectBike();
+            
+            // 表單提交處理
+            const form = document.getElementById('rideBookingForm');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    // 收集表單數據
+                    const formData = {
+                        type: 'test-drive',
+                        name: form.querySelector('input[type="text"]').value,
+                        phone: form.querySelector('input[type="tel"]').value,
+                        brand: document.getElementById('brandSelect').value,
+                        model: document.getElementById('modelSelect').value,
+                        date: new Date().toISOString(),
+                        status: 'pending'
+                    };
+                    
+                    // 保存到 localStorage
+                    saveFormData(formData);
+                    
+                    // 顯示成功消息並重置表單
+                    alert('預約成功，我們將與您聯繫！');
+                    form.reset();
+                });
+            }
         });
+        
+        // 保存表單數據到 localStorage
+        function saveFormData(formData) {
+            let submissions = JSON.parse(localStorage.getItem('formSubmissions') || '[]');
+            formData.id = Date.now(); // 使用時間戳作為唯一ID
+            submissions.push(formData);
+            localStorage.setItem('formSubmissions', JSON.stringify(submissions));
+        }
 
         // 設定最小預約日期為明天
         const tomorrow = new Date();
