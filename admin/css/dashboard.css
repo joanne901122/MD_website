@@ -198,6 +198,7 @@ th {
     transition: all 0.3s;
 }
 
+
 .btn-primary {
     background-color: var(--primary-color);
     color: white;

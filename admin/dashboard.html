@@ -464,20 +464,35 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="data-table" id="test-drive-table">
+                        <table>
                             <thead>
                                 <tr>
-                                    <th>姓名</th>
-                                    <th>電話</th>
-                                    <th>車型</th>
-                                    <th>預約時間</th>
+                                    <th>預約編號</th>
+                                    <th>客戶姓名</th>
+                                    <th>聯絡電話</th>
+                                    <th>預約日期</th>
+                                    <th>品牌 / 車型</th>
                                     <th>備註</th>
-                                    <th style="width: 100px;">狀態</th>
-                                    <th style="width: 300px;">操作</th>
+                                    <th>狀態</th>
+                                    <th>操作</th>
+                                    <th>人員備註</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- 數據會在這裡動態生成 -->
+                                <tr>
+                                    <td>#TD2023123001</td>
+                                    <td>林小華</td>
+                                    <td>0988-765-432</td>
+                                    <td>2023/12/31 14:30</td>
+                                    <td>Model Y</td>
+                                    <td>張大衛</td>
+                                    <td><span style="color: #f39c12;">待確認</span></td>
+                                    <td>
+                                        <button class="btn btn-primary btn-sm">編輯</button>
+                                        <button class="btn btn-danger btn-sm">刪除</button>
+                                    </td>
+                                </tr>
+                                <!-- 更多賞車預約資料 -->
                             </tbody>
                         </table>
                     </div>
@@ -750,22 +765,11 @@
         let currentTab = 'dashboard';
         let currentModal = null;
         
-        // 從 localStorage 載入表單提交數據
+        // 載入表單提交數據（統一由各 loadAndDisplay* 與 updateAllStats 處理）
         function loadFormSubmissions() {
-            // 載入服務預約數據
-            const serviceSubmissions = JSON.parse(localStorage.getItem('formSubmissions') || '[]');
-            const today = new Date().toISOString().split('T')[0];
-            
-            // 計算今日預約數量
-            const todayAppointments = serviceSubmissions.filter(submission => {
-                return submission.bookingDate && submission.bookingDate.startsWith(today);
-            });
-            
-            // 更新統計卡片
-            updateStatCard('maintenance', todayAppointments.length);
-            
-            // 更新預約表格
-            updateAppointmentTable(serviceSubmissions);
+            // 重新計算所有統計並載入保養列表
+            if (typeof updateAllStats === 'function') updateAllStats();
+            loadAndDisplayMaintenance();
         }
         
         // 更新統計卡片
@@ -786,10 +790,20 @@
         
         // 更新預約表格
         function updateAppointmentTable(appointments) {
-            const tbody = document.querySelector('#maintenance-table tbody');
+            const tbody = document.querySelector('#maintenance-section tbody');
             if (!tbody) return;
             
-            tbody.innerHTML = '';
+            tbody.innerHTML = ''; // 清空現有數據
+            
+            if (appointments.length === 0) {
+                const tr = document.createElement('tr');
+                tr.innerHTML = '<td colspan="8" class="no-data">沒有找到相關數據</td>';
+                tbody.appendChild(tr);
+                return;
+            }
+            
+            // 按日期排序，最新的在前面
+            appointments.sort((a, b) => new Date(b.bookingDate) - new Date(a.bookingDate));
             
             appointments.forEach(appointment => {
                 const tr = document.createElement('tr');
@@ -802,10 +816,10 @@
                     <td>${appointment.licensePlate || 'N/A'}</td>
                     <td><span class="status-badge status-pending">待處理</span></td>
                     <td class="action-buttons">
-                        <button class="btn-edit" data-type="maintenance" data-id="${appointment.id}">
+                        <button class="btn-edit" onclick="editItem('maintenance', '${appointment.id}')">
                             <i class="fas fa-edit"></i>
                         </button>
-                        <button class="btn-delete" data-type="maintenance" data-id="${appointment.id}">
+                        <button class="btn-delete" onclick="deleteItem('maintenance', '${appointment.id}')">
                             <i class="fas fa-trash"></i>
                         </button>
                     </td>
@@ -817,30 +831,48 @@
         // 頁面載入時初始化
         document.addEventListener('DOMContentLoaded', function() {
             loadFormSubmissions();
+            // 載入表單提交數據
+            loadAndDisplayMaintenance();
             
-            // 使用事件委託來處理動態載入的按鈕
-            document.addEventListener('click', function(e) {
-                // 處理保養預約刷新按鈕
-                if (e.target && e.target.id === 'refresh-maintenance') {
-                    e.preventDefault();
-                    loadAndDisplayMaintenance();
-                }
-                // 處理賞車預約刷新按鈕
-                else if (e.target && e.target.id === 'refresh-test-drive') {
-                    e.preventDefault();
-                    loadAndDisplayTestDrives();
-                }
-                // 處理活動報名刷新按鈕
-                else if (e.target && e.target.id === 'refresh-events') {
-                    e.preventDefault();
-                    loadAndDisplayEvents();
-                }
-            });
+            // 添加保養預約刷新按鈕事件監聽
+            const refreshMaintenanceBtn = document.getElementById('refresh-maintenance');
+            if (refreshMaintenanceBtn) {
+                refreshMaintenanceBtn.addEventListener('click', loadAndDisplayMaintenance);
+            }
+            
+            // 添加賞車預約刷新按鈕事件監聽
+            const refreshTestDriveBtn = document.getElementById('refresh-test-drive');
+            if (refreshTestDriveBtn) {
+                refreshTestDriveBtn.addEventListener('click', loadAndDisplayTestDrives);
+            }
+            
+            // 添加活動報名刷新按鈕事件監聽
+            const refreshEventsBtn = document.getElementById('refresh-events');
+            if (refreshEventsBtn) {
+                refreshEventsBtn.addEventListener('click', loadAndDisplayEvents);
+            }
             
             // 初始化時載入所有數據
-            loadAndDisplayMaintenance();
             loadAndDisplayTestDrives();
             loadAndDisplayEvents();
+            // 初始化庫存統計與所有統計
+            if (typeof updateInventoryCount === 'function') updateInventoryCount();
+            if (typeof updateAllStats === 'function') updateAllStats();
+        });
+
+        // 當其他頁面修改 localStorage 時，自動更新此頁面列表與統計
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'formSubmissions') {
+                try {
+                    loadFormSubmissions();
+                } catch (err) {
+                    // ignore if function not available
+                }
+                if (typeof loadAndDisplayMaintenance === 'function') loadAndDisplayMaintenance();
+                if (typeof loadAndDisplayTestDrives === 'function') loadAndDisplayTestDrives();
+                if (typeof loadAndDisplayEvents === 'function') loadAndDisplayEvents();
+                if (typeof updateAllStats === 'function') updateAllStats();
+            }
         });
         
         // 載入並顯示保養預約數據
@@ -858,9 +890,9 @@
             // 過濾出保養預約
             const maintenanceSubmissions = submissions.filter(sub => sub.type === 'maintenance');
             
-            // 更新今日預約保養計數
+            // 更新今日預約保養計數（排除已完成項目）
             const today = new Date().toISOString().split('T')[0];
-            const todayAppointments = maintenanceSubmissions.filter(sub => sub.date === today);
+            const todayAppointments = maintenanceSubmissions.filter(sub => sub.date === today && sub.status !== 'completed');
             updateTodayAppointmentCount(todayAppointments.length);
             
             if (maintenanceSubmissions.length === 0) {
@@ -900,10 +932,10 @@
                         </span>
                     </td>
                     <td>
-                        <button class="btn-edit" onclick="updateStatus('${submission.id}')">
-                            ${submission.status === 'completed' ? '標記未完成' : '標記完成'}
+                        <button class="btn-edit" onclick="updateStatus('${submission.id}', '${submission.status === 'completed' ? 'pending' : 'completed'}')">
+                            ${submission.status === 'completed' ? '未完成' : '已完成'}
                         </button>
-                        <button class="btn-delete" onclick="deleteSubmission(\'${submission.id}\')">刪除</button>
+                        <button class="btn-delete" onclick="deleteSubmission('${submission.id}')">刪除</button>
                     </td>
                 `;
                 tableBody.appendChild(row);
@@ -912,43 +944,62 @@
         
         // 載入並顯示賞車預約數據
         function loadAndDisplayTestDrives() {
-            const testDrives = JSON.parse(localStorage.getItem('testDrives') || '[]');
-            const tbody = document.querySelector('#test-drive-table tbody');
+            const submissions = JSON.parse(localStorage.getItem('formSubmissions') || '[]');
+            const tableBody = document.querySelector('#test-drive-section tbody');
             
-            if (!tbody) {
-                console.error('找不到表格主體元素');
+            if (!tableBody) {
+                console.error('找不到賞車預約表格主體元素');
                 return;
             }
             
-            // 清空現有內容
-            tbody.innerHTML = '';
+            tableBody.innerHTML = ''; // 清空現有內容
             
-            if (testDrives.length === 0) {
-                const row = document.createElement('tr');
-                row.innerHTML = '<td colspan="7" class="text-center">暫無預約資料</td>';
-                tbody.appendChild(row);
-                return;
-            }
+            // 過濾出賞車預約
+            const testDriveSubmissions = submissions.filter(sub => sub.type === 'test-drive');
             
-            // 更新今日預約計數
+            // 更新今日賞車預約計數（排除已完成項目）
             const today = new Date().toISOString().split('T')[0];
-            const todayCount = testDrives.filter(drive => 
-                drive.appointmentDate === today
-            ).length;
-            updateTodayTestDriveCount(todayCount);
+            const todayAppointments = testDriveSubmissions.filter(sub => sub.date === today && sub.status !== 'completed');
+            updateTodayTestDriveCount(todayAppointments.length);
             
-            // 按預約日期排序（最新的在前面）
-            const sortedTestDrives = [...testDrives].sort((a, b) => {
-                const dateA = new Date(a.appointmentDate + ' ' + (a.timeSlot || '')).getTime();
-                const dateB = new Date(b.appointmentDate + ' ' + (b.timeSlot || '')).getTime();
-                return dateB - dateA;
-            });
+            if (testDriveSubmissions.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="8" style="text-align: center;">暫無賞車預約記錄</td></tr>';
+                return;
+            }
             
-            // 生成表格行
-            sortedTestDrives.forEach((testDrive) => {
+            // 按日期和時間排序（從早到晚）——若缺少 date/time 則回退到 timestamp
+            function parseSubmissionTime(s) {
+                const d = s.date || s.selectedDate || '';
+                const t = s.time || s.selectedTime || '';
+                const dt = new Date(`${d} ${t}`);
+                if (!isNaN(dt.getTime())) return dt.getTime();
+                if (s.timestamp) return new Date(s.timestamp).getTime();
+                return 0;
+            }
+            testDriveSubmissions.sort((a, b) => parseSubmissionTime(a) - parseSubmissionTime(b));
+
+            testDriveSubmissions.forEach((submission, index) => {
                 const row = document.createElement('tr');
-                updateTestDriveTableRow(row, testDrive);
-                tbody.appendChild(row);
+                row.innerHTML = `
+                    <td>#TD${String(index + 1).padStart(4, '0')}</td>
+                    <td>${submission.name || ''}</td>
+                    <td>${submission.phone || ''}</td>
+                    <td>${submission.date || ''} ${submission.time || ''}</td>
+                    <td>${submission.brand ? submission.brand : ''} / ${submission.model ? submission.model : ''}</td>
+                    <td>${submission.notes || ''}</td>
+                    <td><span class="status-badge status-${submission.status || 'pending'}">${getStatusText(submission.status)}</span></td>
+                    <td>
+                        <button class="btn-edit" onclick="updateTestDriveStatus('${submission.id}', '${submission.status === 'completed' ? 'pending' : 'completed'}')">
+                            ${submission.status === 'completed' ? '已完成' : '未完成'}
+                        </button>
+                        <button class="btn-delete" onclick="deleteTestDrive('${submission.id}')">刪除</button>
+                    </td>
+                    <td>
+                        <input type="text" id="staffNote-${index}" class="staff-note-input" value="${submission.staffNote ? submission.staffNote.replace(/\"/g, '&quot;') : ''}" placeholder="人員備註" ${submission.staffNote ? 'disabled' : ''}>
+                        <button class="btn-save-note" onclick="toggleStaffNote(${index}, this)">${submission.staffNote ? '編輯' : '儲存'}</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
             });
         }
         
@@ -1029,6 +1080,38 @@
                 todayTestDrivesElement.nextElementSibling.textContent = count > 0 ? `今日有 ${count} 筆預約` : '尚無資料';
             }
         }
+
+        function updateInventoryCount() {
+            const submissions = JSON.parse(localStorage.getItem('formSubmissions') || '[]');
+            const inventoryCount = submissions.filter(s => s && s.type === 'inventory').length;
+            const elem = document.querySelector('.stat-card:nth-child(4) .stat-number');
+            if (elem) {
+                elem.textContent = inventoryCount;
+                elem.nextElementSibling.textContent = inventoryCount > 0 ? `${inventoryCount} 台現車` : '尚無資料';
+            }
+        }
+
+        function updateAllStats() {
+            const submissions = JSON.parse(localStorage.getItem('formSubmissions') || '[]');
+            // 保養今日
+            const maintenance = submissions.filter(s => s && s.type === 'maintenance');
+            const today = new Date().toISOString().split('T')[0];
+            // 排除已完成的保養預約
+            const maintenanceToday = maintenance.filter(m => m.date === today && m.status !== 'completed').length;
+            updateTodayAppointmentCount(maintenanceToday);
+
+            // 賞車今日（排除已完成）
+            const testdrives = submissions.filter(s => s && s.type === 'test-drive');
+            const testdriveToday = testdrives.filter(t => t.date === today && t.status !== 'completed').length;
+            updateTodayTestDriveCount(testdriveToday);
+
+            // 活動（數量）
+            const events = submissions.filter(s => s && s.type === 'event');
+            updateEventRegistrationCount(events.length);
+
+            // 庫存
+            updateInventoryCount();
+        }
         
         // 更新活動報名人數計數
         function updateEventRegistrationCount(count) {
@@ -1040,67 +1123,62 @@
         }
         
         // 更新賞車預約狀態
-        function updateTestDriveStatus(id, status) {
-            const testDrives = JSON.parse(localStorage.getItem('testDrives') || '[]');
-            const index = testDrives.findIndex(drive => drive.id === id);
-            
-            if (index !== -1) {
-                testDrives[index].status = status;
-                localStorage.setItem('testDrives', JSON.stringify(testDrives));
-                
-                // 更新表格顯示
-                const tbody = document.querySelector('#test-drive-table tbody');
-                if (tbody) {
-                    const rows = Array.from(tbody.rows);
-                    const rowIndex = rows.findIndex(row => {
-                        const btn = row.querySelector('.btn-status');
-                        return btn && btn.onclick && btn.onclick.toString().includes(`'${id}'`);
-                    });
-                    
-                    if (rowIndex !== -1) {
-                        updateTestDriveTableRow(tbody.rows[rowIndex], testDrives[index]);
-                    } else {
-                        // 如果找不到對應的行，重新加載整個表格
-                        loadAndDisplayTestDrives();
-                    }
-                }
-                
-                // 顯示成功消息
-                showToast('狀態更新成功', 'success');
+        function updateTestDriveStatus(submissionId, status) {
+            const submissions = JSON.parse(localStorage.getItem('formSubmissions') || '[]');
+            const mainIndex = submissions.findIndex(s => s && s.id == submissionId && s.type === 'test-drive');
+            if (mainIndex !== -1) {
+                submissions[mainIndex].status = status;
+                if (status === 'completed') submissions[mainIndex].completedAt = new Date().toISOString();
+                localStorage.setItem('formSubmissions', JSON.stringify(submissions));
+                loadAndDisplayTestDrives();
+                if (typeof updateAllStats === 'function') updateAllStats();
             }
         }
         
         // 刪除賞車預約
-        function deleteTestDrive(id) {
-            if (!confirm('確定要刪除此筆賞車預約嗎？')) {
-                return false; // 如果用戶取消，則不執行刪除
+        function deleteTestDrive(submissionId) {
+            if (!confirm('確定要刪除此筆賞車預約嗎？')) return;
+            const submissions = JSON.parse(localStorage.getItem('formSubmissions') || '[]');
+            const updatedSubmissions = submissions.filter(s => s.id != submissionId);
+            localStorage.setItem('formSubmissions', JSON.stringify(updatedSubmissions));
+            loadAndDisplayTestDrives();
+            if (typeof updateAllStats === 'function') updateAllStats();
+        }
+
+        // 切換/儲存人員備註：若輸入框已鎖定（disabled），點按將解鎖進入編輯；若未鎖定，則儲存並鎖定
+        function toggleStaffNote(index, btn) {
+            const input = document.getElementById(`staffNote-${index}`);
+            if (!input) return;
+
+            // 如果目前是鎖定狀態，切換為可編輯
+            if (input.disabled) {
+                input.disabled = false;
+                input.focus();
+                btn.textContent = '儲存';
+                return;
             }
-            
-            try {
-                const testDrives = JSON.parse(localStorage.getItem('testDrives') || '[]');
-                const updatedTestDrives = testDrives.filter(drive => drive.id !== id);
-                
-                if (updatedTestDrives.length === testDrives.length) {
-                    console.error('找不到要刪除的賞車預約');
-                    showToast('錯誤：找不到要刪除的預約', 'error');
-                    return false;
-                }
-                
-                // 更新 localStorage
-                localStorage.setItem('testDrives', JSON.stringify(updatedTestDrives));
-                
-                // 重新載入顯示
-                loadAndDisplayTestDrives();
-                
-                // 顯示成功消息
-                showToast('賞車預約已成功刪除', 'success');
-                return true;
-                
-            } catch (error) {
-                console.error('刪除賞車預約時發生錯誤:', error);
-                showToast('刪除賞車預約時發生錯誤，請稍後再試', 'error');
-                return false;
+
+            // 否則進行儲存並鎖定
+            const note = input.value;
+            const submissions = JSON.parse(localStorage.getItem('formSubmissions') || '[]');
+            const testDriveSubmissions = submissions.filter(sub => sub.type === 'test-drive');
+            if (!testDriveSubmissions[index]) return;
+
+            const submissionId = testDriveSubmissions[index].id;
+            const mainIndex = submissions.findIndex(s => s.id === submissionId);
+            if (mainIndex === -1) return;
+
+            submissions[mainIndex].staffNote = note;
+            localStorage.setItem('formSubmissions', JSON.stringify(submissions));
+
+            // 更新 UI：鎖定輸入並把按鈕改為編輯
+            input.disabled = true;
+            btn.textContent = '編輯';
+            if (window.Utils && typeof Utils.showToast === 'function') {
+                Utils.showToast('人員備註已儲存', 'success');
             }
+            // 若需要更確實的重繪，可重新載入列表
+            // loadAndDisplayTestDrives();
         }
         
         // 查看活動參與者
@@ -1137,10 +1215,10 @@
         // 獲取狀態文字
         function getStatusText(status) {
             const statusMap = {
-                'pending': '未賞車',
-                'completed': '已賞車'
+                'pending': '未處理',
+                'completed': '處理完成'
             };
-            return statusMap[status] || '未知';
+            return statusMap[status] || '未處理';
         }
         
         // 更新狀態
@@ -1154,40 +1232,18 @@
                 }
                 localStorage.setItem('formSubmissions', JSON.stringify(submissions));
                 loadAndDisplayMaintenance();
+                if (typeof updateAllStats === 'function') updateAllStats();
             }
         }
         
-        // 刪除項目
-        function deleteItem(type, id) {
-            if (!confirm('確定要刪除此筆預約嗎？')) {
-                return;
-            }
-            
-            try {
+        // 刪除預約
+        function deleteSubmission(index) {
+            if (confirm('確定要刪除此筆預約嗎？')) {
                 const submissions = JSON.parse(localStorage.getItem('formSubmissions') || '[]');
-                const updatedSubmissions = submissions.filter(submission => submission.id !== id);
-                
-                if (updatedSubmissions.length === submissions.length) {
-                    console.error('找不到要刪除的預約');
-                    alert('錯誤：找不到要刪除的預約');
-                    return;
-                }
-                
-                localStorage.setItem('formSubmissions', JSON.stringify(updatedSubmissions));
-                
-                // 根據類型重新載入對應的數據
-                if (type === 'maintenance') {
-                    loadAndDisplayMaintenance();
-                } else if (type === 'test-drive') {
-                    loadAndDisplayTestDrives();
-                } else if (type === 'event') {
-                    loadAndDisplayEvents();
-                }
-                
-                console.log('預約已成功刪除');
-            } catch (error) {
-                console.error('刪除預約時發生錯誤:', error);
-                alert('刪除預約時發生錯誤，請稍後再試');
+                submissions.splice(index, 1);
+                localStorage.setItem('formSubmissions', JSON.stringify(submissions));
+                loadAndDisplayMaintenance();
+                if (typeof updateAllStats === 'function') updateAllStats();
             }
         }
 
@@ -1224,10 +1280,10 @@
                             </span>
                         </td>
                         <td>
-                            <button class="btn-edit" onclick="updateStatus('${submission.id}')">
-                                ${submission.status === 'completed' ? '標記未完成' : '標記完成'}
+                            <button class="btn-edit" onclick="updateStatus('${submission.id}', '${submission.status === 'completed' ? 'pending' : 'completed'}')">
+                                ${submission.status === 'completed' ? '未完成' : '標記完成'}
                             </button>
-                            <button class="btn-delete" onclick="deleteSubmission(\'${submission.id}\')">刪除</button>
+                            <button class="btn-delete" onclick="deleteSubmission('${submission.id}')">刪除</button>
                         </td>
                     `;
                     tableBody.appendChild(row);
@@ -1265,110 +1321,34 @@
                 
                 // 重新載入數據以更新顯示
                 loadAndDisplayMaintenance();
+                if (typeof updateAllStats === 'function') updateAllStats();
             }
         }
 
-        // 更新狀態（切換完成/未完成）
-        function updateStatus(submissionId) {
+        // 更新狀態
+        function updateStatus(submissionId, status) {
             const submissions = JSON.parse(localStorage.getItem('formSubmissions') || '[]');
             const submission = submissions.find(s => s.id === submissionId);
             
             if (submission) {
-                // 切換狀態
-                submission.status = submission.status === 'completed' ? 'pending' : 'completed';
-                
-                if (submission.status === 'completed') {
+                submission.status = status;
+                if (status === 'completed') {
                     submission.completedAt = new Date().toISOString();
-                } else {
-                    // 如果狀態改回未完成，清除完成時間
-                    delete submission.completedAt;
                 }
-                
                 localStorage.setItem('formSubmissions', JSON.stringify(submissions));
                 loadAndDisplayMaintenance();
+                if (typeof updateAllStats === 'function') updateAllStats();
             }
         }
 
         // 刪除預約
         function deleteSubmission(submissionId) {
-            if (!submissionId) {
-                console.error('刪除失敗：無效的 ID', submissionId);
-                alert('刪除失敗：無效的 ID');
-                return;
-            }
-            
-            if (!confirm('確定要刪除此筆預約嗎？')) {
-                return; // 如果用戶取消，則不執行刪除
-            }
-            
-            try {
+            if (confirm('確定要刪除此筆預約嗎？')) {
                 const submissions = JSON.parse(localStorage.getItem('formSubmissions') || '[]');
-                
-                // 日誌輸出當前要刪除的 ID 和類型
-                console.log('嘗試刪除 ID:', submissionId, '類型:', typeof submissionId, '所有項目:', submissions);
-                
-                // 改進的 ID 比對邏輯，處理數字和字符串類型的 ID
-                const submissionIndex = submissions.findIndex(s => {
-                    if (!s) return false;
-                    const id1 = String(s.id || '');
-                    const id2 = String(submissionId || '');
-                    return id1 === id2;
-                });
-                
-                if (submissionIndex === -1) {
-                    console.error('找不到要刪除的預約項目，ID:', submissionId, '類型:', typeof submissionId, '所有項目:', submissions);
-                    alert('錯誤：找不到要刪除的預約項目，請刷新頁面後重試');
-                    return;
-                }
-                
-                // 獲取要刪除的項目類型
-                const deletedItemType = submissions[submissionIndex].type || 'maintenance';
-                
-                // 從陣列中移除該筆預約
-                submissions.splice(submissionIndex, 1);
-                
-                // 更新 localStorage
-                localStorage.setItem('formSubmissions', JSON.stringify(submissions));
-                
-                // 根據項目類型重新載入對應的數據
-                if (deletedItemType === 'test-drive') {
-                    loadAndDisplayTestDrives();
-                } else if (deletedItemType === 'event') {
-                    loadAndDisplayEvents();
-                } else {
-                    loadAndDisplayMaintenance();
-                }
-                
-                console.log('預約已成功刪除', '類型:', deletedItemType);
-            } catch (error) {
-                console.error('刪除預約時發生錯誤:', error);
-                alert('刪除預約時發生錯誤，請稍後再試');
-            }
-        }
-        
-        // 獲取狀態對應的 CSS 類名
-        function getStatusClass(status) {
-            switch(status) {
-                case 'completed':
-                    return 'status-completed';
-                case 'processing':
-                    return 'status-processing';
-                case 'pending':
-                default:
-                    return 'status-pending';
-            }
-        }
-        
-        // 獲取狀態對應的文字
-        function getStatusText(status) {
-            switch(status) {
-                case 'completed':
-                    return '已完成';
-                case 'processing':
-                    return '處理中';
-                case 'pending':
-                default:
-                    return '待處理';
+                const updatedSubmissions = submissions.filter(s => s.id !== submissionId);
+                localStorage.setItem('formSubmissions', JSON.stringify(updatedSubmissions));
+                loadAndDisplayMaintenance();
+                if (typeof updateAllStats === 'function') updateAllStats();
             }
         }
         
@@ -1402,54 +1382,16 @@
             testDrive: {
                 title: '預約試乘',
                 fields: [
-                    { type: 'text', id: 'customerName', label: '客戶姓名', placeholder: '您的姓名', required: true },
-                    { type: 'tel', id: 'phone', label: '聯絡電話', placeholder: '聯絡電話', required: true },
-                    { 
-                        type: 'select', 
-                        id: 'brand', 
-                        label: '品牌', 
-                        placeholder: '— 第一步：請選擇品牌 —',
-                        options: [
-                            {value: '', text: '— 第一步：請選擇品牌 —', disabled: true, selected: true},
-                            {value: 'kawasaki', text: 'KAWASAKI 川崎'},
-                            {value: 'kymco', text: 'KYMCO 光陽'},
-                            {value: 'used', text: '二手車輛'}
-                        ],
-                        required: true,
-                        onchange: 'updateTestDriveModels(this)'
-                    },
-                    { 
-                        type: 'select', 
-                        id: 'carModel', 
-                        label: '車型',
-                        placeholder: '— 第二步：請選擇預約車款 —',
-                        options: [{value: '', text: '— 第二步：請選擇預約車款 —', disabled: true, selected: true}],
-                        required: true,
-                        disabled: true
-                    },
-                    { 
-                        type: 'date', 
-                        id: 'appointmentDate', 
-                        label: '預約日期', 
-                        required: true, 
-                        min: new Date().toISOString().split('T')[0],
-                        onchange: 'generateTimeSlots(this)'
-                    },
-                    { 
-                        type: 'select', 
-                        id: 'timeSlot', 
-                        label: '預約時段',
-                        options: [{value: '', text: '請選擇時間', disabled: true, selected: true}],
-                        required: true,
-                        disabled: true
-                    },
-                    { 
-                        type: 'textarea', 
-                        id: 'notes', 
-                        label: '備註',
-                        placeholder: '若有特殊需求請備註',
-                        rows: 3
-                    }
+                    { type: 'text', id: 'customerName', label: '客戶姓名', required: true },
+                    { type: 'tel', id: 'phone', label: '聯絡電話', required: true },
+                    { type: 'email', id: 'email', label: '電子郵件' },
+                    { type: 'date', id: 'preferredDate', label: '預約日期', required: true },
+                    { type: 'select', id: 'preferredTime', label: '預約時段', 
+                      options: ['09:00-10:00', '10:00-11:00', '11:00-12:00', '13:00-14:00', '14:00-15:00', '15:00-16:00'], 
+                      required: true },
+                    { type: 'select', id: 'carModel', label: '車型', 
+                      options: ['NINJA ZX-10R', 'NINJA ZX-6R', 'Z H2', 'NINJA H2', 'VERSYS 1000', 'Z650'], 
+                      required: true }
                 ]
             },
             event: {
@@ -1500,19 +1442,6 @@
             // 添加新的事件監聽器
             document.querySelectorAll('.menu-item[data-tab]').forEach(item => {
                 item.addEventListener('click', handleTabClick);
-            });
-
-            //更新事件監聽(若刪除資料的話要更新)
-            document.addEventListener('click', function(e) {
-                if (e.target && e.target.classList.contains('btn-delete')) {
-                    e.preventDefault();
-                    const button = e.target.closest('.btn-delete');
-                    const type = button.getAttribute('data-type');
-                    const id = button.getAttribute('data-id');
-                    if (type && id && confirm('確定要刪除此項目嗎？')) {
-                        deleteItem(type, id);
-                    }
-                }
             });
 
             // 檢查URL的hash來決定顯示哪個頁面
@@ -1972,11 +1901,6 @@
                 // 如果沒有找到數據，使用模擬數據（僅在第一次加載時）
                 if (tabData.length === 0 && !localStorage.getItem('initialDataLoaded')) {
                     tabData = getMockData(tabId);
-                    // 確保每個項目都有唯一的 ID
-                    tabData = tabData.map(item => ({
-                        ...item,
-                        id: item.id || Date.now().toString() + Math.floor(Math.random() * 1000).toString()
-                    }));
                     // 保存模擬數據到 localStorage
                     const existingData = JSON.parse(localStorage.getItem('formSubmissions') || '[]');
                     const newData = [...existingData, ...tabData];
@@ -1986,12 +1910,6 @@
                     // 重新加載數據
                     return loadTabData(tabId);
                 }
-                
-                // 確保現有數據中的每個項目都有 ID
-                tabData = tabData.map(item => ({
-                    ...item,
-                    id: item.id || Date.now().toString() + Math.floor(Math.random() * 1000).toString()
-                }));
                 
                 // 排序數據，最新的在前面
                 tabData.sort((a, b) => {
@@ -2062,7 +1980,7 @@
                             <button class="btn-action btn-edit" onclick="editItem('test-drive', '${item.id}')" title="編輯">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button class="btn-action btn-delete" onclick="deleteSubmission('${item.id}')" title="刪除">
+                            <button class="btn-action btn-delete" onclick="if(confirm('確定要刪除此項目嗎？')) { deleteItem('test-drive', '${item.id}'); }" title="刪除">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </td>
@@ -2085,7 +2003,7 @@
                             <button class="btn-action btn-edit" onclick="editItem('maintenance', '${item.id}')" title="編輯">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button class="btn-action btn-delete" onclick="deleteSubmission('${item.id}')" title="刪除">
+                            <button class="btn-action btn-delete" onclick="if(confirm('確定要刪除此項目嗎？')) { deleteItem('maintenance', '${item.id}'); }" title="刪除">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </td>
@@ -2191,187 +2109,6 @@
                     return '';
             }
         }  // 新增保養預約
-        // 更新賞車預約表格行
-        function updateTestDriveTableRow(row, testDrive) {
-            const status = testDrive.status || 'pending';
-            const statusText = status === 'completed' ? '已賞車' : '未賞車';
-            const statusClass = status === 'completed' ? 'status-completed' : 'status-pending';
-            
-            row.innerHTML = `
-                <td>${testDrive.customerName || '--'}</td>
-                <td>${testDrive.phone || '--'}</td>
-                <td>${testDrive.brand ? testDrive.brand + (testDrive.carModel ? ' - ' + testDrive.carModel : '') : '--'}</td>
-                <td>${testDrive.appointmentDate ? new Date(testDrive.appointmentDate).toLocaleDateString('zh-TW') + ' ' + (testDrive.timeSlot || '') : '--'}</td>
-                <td>${testDrive.notes || '--'}</td>
-                <td>
-                    <span class="status-badge ${statusClass}">
-                        ${statusText}
-                    </span>
-                </td>
-                <td class="actions">
-                    <div class="btn-group">
-                        <button class="btn btn-sm btn-status ${status === 'completed' ? 'btn-success' : 'btn-outline-secondary'}" 
-                                onclick="updateTestDriveStatus('${testDrive.id}', '${status === 'completed' ? 'pending' : 'completed'}')">
-                            <i class="fas ${status === 'completed' ? 'fa-undo' : 'fa-check'}"></i>
-                            ${status === 'completed' ? '標記未賞車' : '標記已賞車'}
-                        </button>
-                        <button class="btn btn-sm btn-edit" onclick="editItem('test-drive', '${testDrive.id}')">
-                            <i class="fas fa-edit"></i> 編輯
-                        </button>
-                        <button class="btn btn-sm btn-delete" onclick="if(confirm('確定要刪除此預約嗎？')) { deleteTestDrive('${testDrive.id}'); }">
-                            <i class="fas fa-trash"></i> 刪除
-                        </button>
-                    </div>
-                </td>
-            `;
-        }
-
-        // 載入並顯示賞車預約數據
-        function loadAndDisplayTestDrives() {
-            const testDrives = JSON.parse(localStorage.getItem('testDrives') || '[]');
-            const tbody = document.querySelector('#test-drive-table tbody');
-            
-            if (!tbody) {
-                console.error('找不到表格主體元素');
-                return;
-            }
-            
-            // 清空現有內容
-            tbody.innerHTML = '';
-            
-            if (testDrives.length === 0) {
-                const row = document.createElement('tr');
-                row.innerHTML = '<td colspan="7" class="text-center">暫無預約資料</td>';
-                tbody.appendChild(row);
-                return;
-            }
-            
-            // 更新今日預約計數
-            const today = new Date().toISOString().split('T')[0];
-            const todayCount = testDrives.filter(drive => 
-                drive.appointmentDate === today
-            ).length;
-            updateTodayTestDriveCount(todayCount);
-            
-            // 按預約日期排序（最新的在前面）
-            const sortedTestDrives = [...testDrives].sort((a, b) => {
-                const dateA = new Date(a.appointmentDate + ' ' + (a.timeSlot || '')).getTime();
-                const dateB = new Date(b.appointmentDate + ' ' + (b.timeSlot || '')).getTime();
-                return dateB - dateA;
-            });
-            
-            // 生成表格行
-            sortedTestDrives.forEach((testDrive) => {
-                const row = document.createElement('tr');
-                updateTestDriveTableRow(row, testDrive);
-                tbody.appendChild(row);
-            });
-        }
-        
-        // 更新試乘車型選項
-        function updateTestDriveModels(selectElement) {
-            const modelSelect = document.getElementById('modelSelect');
-            const brand = selectElement.value;
-            
-            // 清空現有選項
-            modelSelect.innerHTML = '';
-            
-            // 根據選擇的品牌添加對應的車型選項
-            let options = [{value: '', text: '— 第二步：請選擇預約車款 —', disabled: true, selected: true}];
-            
-            if (brand === 'kawasaki') {
-                options = options.concat([
-                    {value: 'ninja_zx10r', text: 'NINJA ZX-10R'},
-                    {value: 'ninja_zx6r', text: 'NINJA ZX-6R'},
-                    {value: 'z_h2', text: 'Z H2'},
-                    {value: 'ninja_h2', text: 'NINJA H2'},
-                    {value: 'versys_1000', text: 'VERSYS 1000'},
-                    {value: 'z650', text: 'Z650'}
-                ]);
-            } else if (brand === 'kymco') {
-                options = options.concat([
-                    {value: 'ak550', text: 'AK550'},
-                    {value: 'dt_x360', text: 'DT X360'},
-                    {value: 'krv', text: 'KRV'},
-                    {value: 'racing_s', text: 'RACING S'},
-                    {value: 'new_many', text: 'NEW MANY'}
-                ]);
-            } else if (brand === 'used') {
-                options = options.concat([
-                    {value: 'used_1', text: '二手車 1'},
-                    {value: 'used_2', text: '二手車 2'},
-                    {value: 'used_3', text: '二手車 3'}
-                ]);
-            }
-            
-            // 添加選項到下拉選單
-            options.forEach(option => {
-                const optionElement = document.createElement('option');
-                optionElement.value = option.value;
-                optionElement.textContent = option.text;
-                if (option.disabled) optionElement.disabled = true;
-                if (option.selected) optionElement.selected = true;
-                modelSelect.appendChild(optionElement);
-            });
-            
-            // 啟用車型選擇
-            modelSelect.disabled = !brand;
-        }
-        
-        // 刪除賞車預約
-        function deleteTestDrive(id) {
-            if (!confirm('確定要刪除此賞車預約嗎？')) return;
-            
-            const testDrives = JSON.parse(localStorage.getItem('testDrives')) || [];
-            const updatedTestDrives = testDrives.filter(drive => drive.id !== id);
-            
-            localStorage.setItem('testDrives', JSON.stringify(updatedTestDrives));
-            loadAndDisplayTestDrives();
-            showToast('預約已刪除', 'success');
-        }
-        
-        // 更新今日賞車預約計數
-        function updateTodayTestDriveCount(count) {
-            const element = document.querySelector('.stat-card:nth-child(2) .stat-number');
-            if (element) {
-                element.textContent = count;
-                const changeElement = element.nextElementSibling;
-                if (count > 0) {
-                    changeElement.textContent = '今日預約';
-                    changeElement.style.color = '#2ecc71';
-                } else {
-                    changeElement.textContent = '尚無預約';
-                    changeElement.style.color = '';
-                }
-            }
-        }
-        
-        // 初始化按鈕事件
-        document.getElementById('add-test-drive').addEventListener('click', function() {
-            openModal('testDrive');
-        });
-        
-        document.getElementById('refresh-test-drive').addEventListener('click', function() {
-            loadAndDisplayTestDrives();
-            showToast('賞車預約列表已刷新', 'info');
-        });
-        
-        // 在DOM加載完成時調用
-        document.addEventListener('DOMContentLoaded', function() {
-            // 確保只綁定一次事件
-            const refreshBtn = document.getElementById('refresh-test-drive');
-            if (refreshBtn) {
-                refreshBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    loadAndDisplayTestDrives();
-                    showToast('賞車預約列表已刷新', 'info');
-                });
-            }
-            
-            // 載入初始數據
-            loadAndDisplayTestDrives();
-        });
-        
         document.getElementById('add-maintenance').addEventListener('click', function() {
             document.getElementById('modalTitle').textContent = '新增保養預約';
             document.getElementById('formContent').innerHTML = `
@@ -2411,171 +2148,43 @@
 
         // 新增賞車預約
         document.getElementById('add-test-drive').addEventListener('click', function() {
-            document.getElementById('modalTitle').textContent = '預約試乘';
+            document.getElementById('modalTitle').textContent = '新增賞車預約';
             document.getElementById('formContent').innerHTML = `
-                <form id="testDriveForm" onsubmit="saveTestDrive(event)" class="booking-form">
+                <form id="testDriveForm" onsubmit="saveTestDrive(event)">
                     <div class="form-group">
-                        <input type="text" id="customerName" placeholder="您的姓名" class="form-control" required>
+                        <label for="tdCustomerName">客戶姓名</label>
+                        <input type="text" id="tdCustomerName" class="form-control" required>
                     </div>
                     <div class="form-group">
-                        <input type="tel" id="phone" placeholder="聯絡電話" class="form-control" required>
+                        <label for="tdPhone">聯絡電話</label>
+                        <input type="tel" id="tdPhone" class="form-control" required>
                     </div>
                     <div class="form-group">
-                        <select id="brandSelect" onchange="updateTestDriveModels(this)" class="form-control" required>
-                            <option value="" disabled selected>— 第一步：請選擇品牌 —</option>
-                            <option value="kawasaki">KAWASAKI 川崎</option>
-                            <option value="kymco">KYMCO 光陽</option>
-                            <option value="used">二手車輛</option>
+                        <label for="tdDate">預約日期時間</label>
+                        <input type="datetime-local" id="tdDate" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="interstedModel">感興趣車型</label>
+                        <select id="interstedModel" class="form-control" required>
+                            <option value="">-- 請選擇車型 --</option>
+                            <option value="Model S">Model S</option>
+                            <option value="Model 3">Model 3</option>
+                            <option value="Model X">Model X</option>
+                            <option value="Model Y">Model Y</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <select id="modelSelect" class="form-control" disabled required>
-                            <option value="" disabled selected>— 第二步：請選擇預約車款 —</option>
-                        </select>
-                    </div>
-                    <div class="form-row">
-                        <input type="date" id="appointmentDate" class="form-control" onchange="generateTimeSlots(this)" required>
-                        <select id="timeSelect" class="form-control" required>
-                            <option value="" disabled selected>預約時間</option>
-                        </select>
-                    </div>
-                    <div id="dateError" class="date-hint" style="color: #dc3545; font-size: 0.875rem; margin-top: -0.5rem; margin-bottom: 1rem; display: none;">
-                        ⚠️ 週日公休，請選擇其他日期
-                    </div>
-                    <div class="form-group">
-                        <textarea id="notes" class="form-control" placeholder="若有特殊需求請備註" rows="3"></textarea>
+                        <label for="salesPerson">業務人員</label>
+                        <input type="text" id="salesPerson" class="form-control" required>
                     </div>
                     <div style="text-align: right; margin-top: 20px;">
                         <button type="button" class="btn btn-danger" onclick="closeModal()">取消</button>
-                        <button type="submit" class="btn btn-primary">確認提交</button>
+                        <button type="submit" class="btn btn-primary">儲存</button>
                     </div>
                 </form>
             `;
-            
-            // 設置最小日期為明天
-            const tomorrow = new Date();
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            document.getElementById('appointmentDate').min = tomorrow.toISOString().split('T')[0];
-            
             modal.style.display = 'flex';
         });
-        
-        // 更新試乘車型選項
-        function updateTestDriveModels(selectElement) {
-            const modelSelect = document.getElementById('carModel');
-            const brand = selectElement.value;
-            
-            // 清空現有選項
-            modelSelect.innerHTML = '';
-            
-            // 根據選擇的品牌添加對應的車型選項
-            let options = [{value: '', text: '— 第二步：請選擇預約車款 —', disabled: true, selected: true}];
-            
-            if (brand === 'kawasaki') {
-                options = options.concat([
-                    {value: 'ninja_zx10r', text: 'NINJA ZX-10R'},
-                    {value: 'ninja_zx6r', text: 'NINJA ZX-6R'},
-                    {value: 'z_h2', text: 'Z H2'},
-                    {value: 'ninja_h2', text: 'NINJA H2'},
-                    {value: 'versys_1000', text: 'VERSYS 1000'},
-                    {value: 'z650', text: 'Z650'}
-                ]);
-            } else if (brand === 'kymco') {
-                options = options.concat([
-                    {value: 'ak550', text: 'AK550'},
-                    {value: 'dt_x360', text: 'DT X360'},
-                    {value: 'krv', text: 'KRV'},
-                    {value: 'racing_s', text: 'RACING S'},
-                    {value: 'new_many', text: 'NEW MANY'}
-                ]);
-            } else if (brand === 'used') {
-                options = options.concat([
-                    {value: 'used_1', text: '二手車 1'},
-                    {value: 'used_2', text: '二手車 2'},
-                    {value: 'used_3', text: '二手車 3'}
-                ]);
-            }
-            
-            // 添加選項到下拉選單
-            options.forEach(option => {
-                const optionElement = document.createElement('option');
-                optionElement.value = option.value;
-                optionElement.textContent = option.text;
-                if (option.disabled) optionElement.disabled = true;
-                if (option.selected) optionElement.selected = true;
-                modelSelect.appendChild(optionElement);
-            });
-            
-            // 啟用車型選擇
-            modelSelect.disabled = !brand;
-        }
-        
-        // 生成時間段選項
-        function generateTimeSlots(dateInput) {
-            const timeSelect = document.getElementById('timeSlot');
-            const dateError = dateInput.parentNode.querySelector('.date-hint') || 
-                             document.querySelector('.date-hint') || 
-                             (() => {
-                                const hint = document.createElement('div');
-                                hint.className = 'date-hint';
-                                hint.style.color = '#dc3545';
-                                hint.style.fontSize = '0.875rem';
-                                hint.style.marginTop = '-0.5rem';
-                                hint.style.marginBottom = '1rem';
-                                hint.style.display = 'none';
-                                hint.innerHTML = '⚠️ 週日公休，請選擇其他日期';
-                                dateInput.parentNode.parentNode.insertBefore(hint, dateInput.parentNode.nextSibling);
-                                return hint;
-                             })();
-            
-            const selectedDate = new Date(dateInput.value);
-            const dayOfWeek = selectedDate.getDay();
-            
-            // 清空現有選項
-            timeSelect.innerHTML = '';
-            
-            // 檢查是否為週日（0 是週日）
-            if (dayOfWeek === 0) {
-                const option = document.createElement('option');
-                option.value = '';
-                option.textContent = '週日公休，請選擇其他日期';
-                option.disabled = true;
-                option.selected = true;
-                timeSelect.appendChild(option);
-                timeSelect.disabled = true;
-                dateError.style.display = 'block';
-                return;
-            }
-            
-            // 隱藏錯誤信息
-            dateError.style.display = 'none';
-            
-            // 生成時間段選項（週一至週六）
-            const startHour = 9; // 早上9點開始
-            const endHour = 17;  // 下午5點結束
-            
-            // 添加默認選項
-            const defaultOption = document.createElement('option');
-            defaultOption.value = '';
-            defaultOption.textContent = '請選擇時間';
-            defaultOption.disabled = true;
-            defaultOption.selected = true;
-            timeSelect.appendChild(defaultOption);
-            
-            for (let hour = startHour; hour < endHour; hour++) {
-                // 跳過中午12點到1點（午休時間）
-                if (hour === 12) continue;
-                
-                const timeString = `${hour.toString().padStart(2, '0')}:00-${(hour + 1).toString().padStart(2, '0')}:00`;
-                const option = document.createElement('option');
-                option.value = timeString;
-                option.textContent = timeString;
-                timeSelect.appendChild(option);
-            }
-            
-            // 啟用時間選擇
-            timeSelect.disabled = false;
-        }
 
         // 新增活動
         document.getElementById('add-event').addEventListener('click', function() {
@@ -2658,65 +2267,123 @@
         // 表單提交處理函數
         function saveMaintenance(e) {
             e.preventDefault();
-            // 這裡添加保存邏輯
+            const name = document.getElementById('customerName').value;
+            const phone = document.getElementById('phone').value;
+            const appointment = document.getElementById('appointmentDate').value; // datetime-local
+            const carModel = document.getElementById('carModel').value;
+            const licensePlate = document.getElementById('licensePlate').value;
+            const notes = document.getElementById('notes').value || '';
+
+            const date = appointment ? appointment.split('T')[0] : '';
+            const time = appointment ? appointment.split('T')[1].slice(0,5) : '';
+
+            const submissions = JSON.parse(localStorage.getItem('formSubmissions') || '[]');
+            const item = {
+                id: Date.now(),
+                type: 'maintenance',
+                name: name,
+                phone: phone,
+                date: date,
+                time: time,
+                bikeModel: carModel,
+                licensePlate: licensePlate,
+                notes: notes,
+                status: 'pending'
+            };
+            submissions.push(item);
+            localStorage.setItem('formSubmissions', JSON.stringify(submissions));
+            loadAndDisplayMaintenance();
+            if (typeof updateAllStats === 'function') updateAllStats();
             alert('保養預約已儲存');
             closeModal();
-            showToast('保養預約已保存', 'success');
         }
 
         function saveTestDrive(e) {
             e.preventDefault();
-            const testDriveData = {};
-            
-            // 將表單數據轉換為對象
-            for (let [key, value] of formData.entries()) {
-                testDriveData[key] = value;
-            }
-            
-            // 添加ID和創建時間
-            if (!testDriveData.id) {
-                testDriveData.id = 'td-' + Date.now();
-                testDriveData.createdAt = new Date().toISOString();
-                testDriveData.status = 'pending'; // 默認狀態為待處理
-            }
-            
-            // 獲取現有數據
-            const testDrives = JSON.parse(localStorage.getItem('testDrives')) || [];
-            
-            if (testDriveData.id) {
-                // 更新現有預約
-                const index = testDrives.findIndex(item => item.id === testDriveData.id);
-                if (index !== -1) {
-                    testDrives[index] = { ...testDrives[index], ...testDriveData };
-                } else {
-                    testDrives.push(testDriveData);
-                }
-            } else {
-                // 添加新預約
-                testDrives.push(testDriveData);
-            }
-            
-            // 保存到localStorage
-            localStorage.setItem('testDrives', JSON.stringify(testDrives));
-            
-            // 刷新列表
+            const name = document.getElementById('tdCustomerName').value;
+            const phone = document.getElementById('tdPhone').value;
+            const dt = document.getElementById('tdDate').value;
+            const interested = document.getElementById('interstedModel').value;
+            const salesPerson = document.getElementById('salesPerson').value || '';
+
+            const date = dt ? dt.split('T')[0] : '';
+            const time = dt ? dt.split('T')[1].slice(0,5) : '';
+
+            const submissions = JSON.parse(localStorage.getItem('formSubmissions') || '[]');
+            const item = {
+                id: Date.now(),
+                type: 'test-drive',
+                name: name,
+                phone: phone,
+                date: date,
+                time: time,
+                brand: '',
+                model: '',
+                interestedModel: interested,
+                salesPerson: salesPerson,
+                notes: '',
+                timestamp: new Date().toISOString(),
+                status: 'pending'
+            };
+            submissions.push(item);
+            localStorage.setItem('formSubmissions', JSON.stringify(submissions));
             loadAndDisplayTestDrives();
-            
-            // 關閉模態框並顯示成功消息
+            if (typeof updateAllStats === 'function') updateAllStats();
+            alert('賞車預約已儲存');
             closeModal();
-            showToast('賞車預約已保存', 'success');
         }
 
         function saveEvent(e) {
             e.preventDefault();
-            // 這裡添加保存邏輯
+            const name = document.getElementById('eventName').value;
+            const dt = document.getElementById('eventDate').value;
+            const location = document.getElementById('location').value;
+            const max = document.getElementById('maxAttendees').value || 0;
+            const description = document.getElementById('eventDescription').value || '';
+
+            const item = {
+                id: Date.now(),
+                type: 'event',
+                eventName: name,
+                eventDate: dt,
+                eventLocation: location,
+                maxParticipants: Number(max),
+                eventDescription: description
+            };
+            const submissions = JSON.parse(localStorage.getItem('formSubmissions') || '[]');
+            submissions.push(item);
+            localStorage.setItem('formSubmissions', JSON.stringify(submissions));
+            loadAndDisplayEvents();
+            if (typeof updateAllStats === 'function') updateAllStats();
             alert('活動已建立');
             closeModal();
         }
 
         function saveInventory(e) {
             e.preventDefault();
-            // 這裡添加保存邏輯
+            const plate = document.getElementById('licensePlateNo').value;
+            const model = document.getElementById('inventoryModel').value;
+            const color = document.getElementById('color').value;
+            const year = document.getElementById('year').value;
+            const mileage = document.getElementById('mileage').value;
+            const price = document.getElementById('price').value;
+
+            const item = {
+                id: Date.now(),
+                type: 'inventory',
+                plate: plate,
+                model: model,
+                color: color,
+                year: year,
+                mileage: Number(mileage),
+                price: Number(price)
+            };
+            const submissions = JSON.parse(localStorage.getItem('formSubmissions') || '[]');
+            submissions.push(item);
+            localStorage.setItem('formSubmissions', JSON.stringify(submissions));
+            // 更新庫存顯示／統計
+            if (typeof updateInventoryCount === 'function') updateInventoryCount();
+            if (typeof updateAllStats === 'function') updateAllStats();
             alert('車輛庫存已新增');
             closeModal();
         }

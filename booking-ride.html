@@ -234,13 +234,26 @@
                     e.preventDefault();
                     
                     // 收集表單數據
+                    const dateInput = document.getElementById('bookDate').value;
+                    const timeInput = document.getElementById('timeSelect').value;
+                    
+                    // 直接保存日期和時間字符串，不轉換為Date對象
                     const formData = {
                         type: 'test-drive',
                         name: form.querySelector('input[type="text"]').value,
                         phone: form.querySelector('input[type="tel"]').value,
                         brand: document.getElementById('brandSelect').value,
                         model: document.getElementById('modelSelect').value,
-                        date: new Date().toISOString(),
+                        // 直接保存日期和時間字符串（兼容舊欄位）
+                        selectedDate: dateInput,
+                        selectedTime: timeInput,
+                        // 兼容 admin/dashboard.html 使用的欄位名稱
+                        date: dateInput,
+                        time: timeInput,
+                        interestedModel: document.getElementById('modelSelect').value,
+                        notes: form.querySelector('textarea').value || '',
+                        // 同時保存時間戳以保持向後兼容
+                        timestamp: new Date().toISOString(),
                         status: 'pending'
                     };
                     
@@ -262,10 +275,21 @@
             localStorage.setItem('formSubmissions', JSON.stringify(submissions));
         }
 
-        // 設定最小預約日期為明天
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        document.getElementById('bookDate').setAttribute('min', tomorrow.toISOString().split('T')[0]);
+        // 設定最小預約日期為今天
+        const today = new Date();
+        const todayString = today.toISOString().split('T')[0];
+        const dateInput = document.getElementById('bookDate');
+        dateInput.setAttribute('min', todayString);
+        
+        // 如果沒有選擇日期，則預設為今天
+        if (!dateInput.value) {
+            dateInput.value = todayString;
+            // 觸發時間段生成
+            generate24HSlots();
+        }
+        
+        // 確保時間選擇器是必填的
+        document.getElementById('timeSelect').required = true;
 
         // 將bikeData設為全局變量，方便其他函數訪問
         window.bikeData = {
