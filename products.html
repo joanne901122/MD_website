@@ -45,86 +45,168 @@
             <button class="filter-btn" onclick="filterBikes('used', event)">二手全車款</button>
         </div>
 
+        <!-- 靜態新車展示（川崎、光陽），由管理員手動維護；二手車由下方的動態區塊顯示 -->
+        <div class="product-grid" id="newBikeGrid">
+            <!-- KAWASAKI 全車款 (常見清單) -->
+            <div class="product-card" data-brand="kawasaki">
+                <img src="https://via.placeholder.com/800x450?text=Kawasaki+Ninja+400" alt="Kawasaki Ninja 400" class="product-img">
+                <div class="product-info">
+                    <span class="product-brand">KAWASAKI</span>
+                    <h3 class="product-name">Ninja 400</h3>
+                    <span class="product-price">售價 195,000 元</span>
+                    <div class="product-specs"><span>399 cc</span> | <span>2025</span></div>
+                    <a href="booking-ride.html?model=Ninja%20400&brand=KAWASAKI" class="btn-view">預約賞車</a>
+                </div>
+            </div>
+
+            <div class="product-card" data-brand="kawasaki">
+                <img src="https://via.placeholder.com/800x450?text=Kawasaki+Ninja+650" alt="Kawasaki Ninja 650" class="product-img">
+                <div class="product-info">
+                    <span class="product-brand">KAWASAKI</span>
+                    <h3 class="product-name">Ninja 650</h3>
+                    <span class="product-price">售價 255,000 元</span>
+                    <div class="product-specs"><span>649 cc</span> | <span>2025</span></div>
+                    <a href="booking-ride.html?model=Ninja%20650&brand=KAWASAKI" class="btn-view">預約賞車</a>
+                </div>
+            </div>
+
+            <div class="product-card" data-brand="kawasaki">
+                <img src="https://via.placeholder.com/800x450?text=Kawasaki+Z650" alt="Kawasaki Z650" class="product-img">
+                <div class="product-info">
+                    <span class="product-brand">KAWASAKI</span>
+                    <h3 class="product-name">Z650</h3>
+                    <span class="product-price">售價 238,000 元</span>
+                    <div class="product-specs"><span>649 cc</span> | <span>2025</span></div>
+                    <a href="booking-ride.html?model=Z650&brand=KAWASAKI" class="btn-view">預約賞車</a>
+                </div>
+            </div>
+
+            <div class="product-card" data-brand="kawasaki">
+                <img src="https://via.placeholder.com/800x450?text=Kawasaki+Z650" alt="Kawasaki Z650" class="product-img">
+                <div class="product-info">
+                    <span class="product-brand">KAWASAKI</span>
+                    <h3 class="product-name">Z900</h3>
+                    <span class="product-price">售價 538,000 元</span>
+                    <div class="product-specs"><span>948 cc</span> | <span>2023'2024</span></div>
+                    <a href="booking-ride.html?model=Z900&brand=KAWASAKI" class="btn-view">預約賞車</a>
+                </div>
+            </div>
+
+            <div class="product-card" data-brand="kawasaki">
+                <img src="https://via.placeholder.com/800x450?text=Kawasaki+Z650" alt="Kawasaki Z650" class="product-img">
+                <div class="product-info">
+                    <span class="product-brand">KAWASAKI</span>
+                    <h3 class="product-name">Z650RS</h3>
+                    <span class="product-price">售價 398,000 元</span>
+                    <div class="product-specs"><span>649 cc</span> | <span>2023'2024</span></div>
+                    <a href="booking-ride.html?model=Z650RS&brand=KAWASAKI" class="btn-view">預約賞車</a>
+                </div>
+            </div>
+
+            <div class="product-card" data-brand="kawasaki">
+                <img src="https://via.placeholder.com/800x450?text=Kawasaki+Z650" alt="Kawasaki Z650" class="product-img">
+                <div class="product-info">
+                    <span class="product-brand">KAWASAKI</span>
+                    <h3 class="product-name">Z900RS</h3>
+                    <span class="product-price">售價 628,000 元</span>
+                    <div class="product-specs"><span>948 cc</span> | <span>2023'2024</span></div>
+                    <a href="booking-ride.html?model=Z900RS&brand=KAWASAKI" class="btn-view">預約賞車</a>
+                </div>
+            </div>
+
+            <div class="product-card" data-brand="kawasaki">
+                <img src="https://via.placeholder.com/800x450?text=Kawasaki+ZX-10R" alt="Kawasaki ZX-10R" class="product-img">
+                <div class="product-info">
+                    <span class="product-brand">KAWASAKI</span>
+                    <h3 class="product-name">ZX-10R</h3>
+                    <span class="product-price">售價 988,000 元</span>
+                    <div class="product-specs"><span>998 cc</span> | <span>2025</span></div>
+                    <a href="booking-ride.html?model=ZX-10R&brand=KAWASAKI" class="btn-view">預約賞車</a>
+                </div>
+            </div>
+
+            <!-- KYMCO (光陽) 全車款 (常見清單) -->
+            <div class="product-card" data-brand="kymco">
+                <img src="https://via.placeholder.com/800x450?text=KYMCO+GP+125" alt="KYMCO GP 125" class="product-img">
+                <div class="product-info">
+                    <span class="product-brand">KYMCO</span>
+                    <h3 class="product-name">GP 125</h3>
+                    <span class="product-price">售價 78,800 元</span>
+                    <div class="product-specs"><span>125 cc</span> | <span>2025</span></div>
+                    <a href="booking-ride.html?model=GP%20125&brand=KYMCO" class="btn-view">預約賞車</a>
+                </div>
+            </div>
+
+            <div class="product-card" data-brand="kymco">
+                <img src="https://via.placeholder.com/800x450?text=KYMCO+Like+125" alt="KYMCO Like 125" class="product-img">
+                <div class="product-info">
+                    <span class="product-brand">KYMCO</span>
+                    <h3 class="product-name">Like 125</h3>
+                    <span class="product-price">售價 68,800 元</span>
+                    <div class="product-specs"><span>125 cc</span> | <span>2025</span></div>
+                    <a href="booking-ride.html?model=Like%20125&brand=KYMCO" class="btn-view">預約賞車</a>
+                </div>
+            </div>
+
+            <div class="product-card" data-brand="kymco">
+                <img src="https://via.placeholder.com/800x450?text=KYMCO+Many+125" alt="KYMCO Many 125" class="product-img">
+                <div class="product-info">
+                    <span class="product-brand">KYMCO</span>
+                    <h3 class="product-name">Many 125</h3>
+                    <span class="product-price">售價 59,800 元</span>
+                    <div class="product-specs"><span>125 cc</span> | <span>2025</span></div>
+                    <a href="booking-ride.html?model=Many%20125&brand=KYMCO" class="btn-view">預約賞車</a>
+                </div>
+            </div>
+
+            <div class="product-card" data-brand="kymco">
+                <img src="https://via.placeholder.com/800x450?text=KYMCO+Racing+S" alt="KYMCO Racing S" class="product-img">
+                <div class="product-info">
+                    <span class="product-brand">KYMCO</span>
+                    <h3 class="product-name">Racing S</h3>
+                    <span class="product-price">售價 89,800 元</span>
+                    <div class="product-specs"><span>150 cc</span> | <span>2025</span></div>
+                    <a href="booking-ride.html?model=Racing%20S&brand=KYMCO" class="btn-view">預約賞車</a>
+                </div>
+            </div>
+
+            <div class="product-card" data-brand="kymco">
+                <img src="https://via.placeholder.com/800x450?text=KYMCO+KRV+180" alt="KYMCO KRV 180" class="product-img">
+                <div class="product-info">
+                    <span class="product-brand">KYMCO</span>
+                    <h3 class="product-name">KRV 180</h3>
+                    <span class="product-price">售價 148,000 元</span>
+                    <div class="product-specs"><span>180 cc</span> | <span>2025</span></div>
+                    <a href="booking-ride.html?model=KRV%20180&brand=KYMCO" class="btn-view">預約賞車</a>
+                </div>
+            </div>
+
+            <div class="product-card" data-brand="kymco">
+                <img src="https://via.placeholder.com/800x450?text=KYMCO+Ionex" alt="KYMCO Ionex 系列" class="product-img">
+                <div class="product-info">
+                    <span class="product-brand">KYMCO</span>
+                    <h3 class="product-name">Ionex 系列</h3>
+                    <span class="product-price">售價 視車型而定</span>
+                    <div class="product-specs"><span>電動</span> | <span>2025</span></div>
+                    <a href="booking-ride.html?model=Ionex&brand=KYMCO" class="btn-view">預約賞車</a>
+                </div>
+            </div>
+
+            <div class="product-card" data-brand="kymco">
+                <img src="https://via.placeholder.com/800x450?text=KYMCO+AK+550" alt="KYMCO AK 550" class="product-img">
+                <div class="product-info">
+                    <span class="product-brand">KYMCO</span>
+                    <h3 class="product-name">AK 550</h3>
+                    <span class="product-price">售價 368,000 元</span>
+                    <div class="product-specs"><span>550 cc</span> | <span>2025</span></div>
+                    <a href="booking-ride.html?model=AK%20550&brand=KYMCO" class="btn-view">預約賞車</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 動態二手車展示區（由 localStorage.formSubmissions 的 type === 'inventory' 動態生成） -->
         <div class="product-grid" id="bikeGrid">
-            <div class="product-card" data-brand="kawasaki">
-                <img src="https://images.unsplash.com/photo-1614165933388-9b16da04442e?q=80&w=800" alt="ZX-10R" class="product-img">
-                <div class="product-info">
-                    <span class="product-brand">KAWASAKI</span>
-                    <h3 class="product-name">Ninja ZX-10R</h3>
-                    <span class="product-price">建議售價 $938,000 起</span>
-                    <div class="product-specs">
-                        <span>998cc</span> | <span>四缸水冷</span> | <span>現車在庫</span>
-                    </div>
-                    <a href="booking-ride.html?model=ZX-10R&brand=kawasaki" class="btn-view">預約賞車</a>
-                </div>
-            </div>
-
-            <div class="product-card" data-brand="kawasaki">
-                <img src="https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?q=80&w=800" alt="Z900RS" class="product-img">
-                <div class="product-info">
-                    <span class="product-brand">KAWASAKI</span>
-                    <h3 class="product-name">Z 900RS</h3>
-                    <span class="product-price">建議售價 $568,000 起</span>
-                    <div class="product-specs">
-                        <span>948cc</span> | <span>經典復古</span> | <span>少量到庫</span>
-                    </div>
-                    <a href="booking-ride.html?model=Z 900RS&brand=KAWASAKI" class="btn-view">預約賞車</a>
-                </div>
-            </div>
-
-            <div class="product-card" data-brand="kymco">
-                <img src="https://images.unsplash.com/photo-1591637333184-19aa84b3e01f?q=80&w=800" alt="AK Premium" class="product-img">
-                <div class="product-info">
-                    <span class="product-brand">KYMCO</span>
-                    <h3 class="product-name">AK Premium</h3>
-                    <span class="product-price">建議售價 $376,000 起</span>
-                    <div class="product-specs">
-                        <span>550cc</span> | <span>旗艦跑旅</span> | <span>現車供應</span>
-                    </div>
-                    <a href="booking-ride.html?model=AK Premium&brand=KYMCO" class="btn-view">預約賞車</a>
-                </div>
-            </div>
-
-            <div class="product-card" data-brand="kymco">
-                <div style="height:250px; background:#eee; display:flex; align-items:center; justify-content:center;">暫無圖片 (RTS 135)</div>
-                <div class="product-info">
-                    <span class="product-brand">KYMCO</span>
-                    <h3 class="product-name">RTS 135</h3>
-                    <span class="product-price">歡慶上市 特惠中</span>
-                    <div class="product-specs">
-                        <span>135cc</span> | <span>水冷引擎</span> | <span>熱騰騰到貨</span>
-                    </div>
-                    <a href="booking-ride.html?model=Z 900RS&brand=KAWASAKI" class="btn-view">預約賞車</a>
-                </div>
-            </div>
-
-            <!-- 二手車款 -->
-            <div class="product-card used" data-brand="used">
-                <img src="https://images.unsplash.com/photo-1558981806-ede5b310f72e?q=80&w=800" alt="Used Bike 1" class="product-img">
-                <div class="product-info">
-                    <span class="product-brand">HONDA</span>
-                    <h3 class="product-name">CBR600RR</h3>
-                    <span class="product-price">二手價 $258,000</span>
-                    <div class="product-specs">
-                        <span>599cc</span> | <span>2019年式</span> | <span>里程12,500km</span>
-                    </div>
-                    <a href="booking-ride.html?model=HONDA CBR600RR&brand=used" class="btn-view">預約看車</a>
-                </div>
-            </div>
-
-            <div class="product-card used" data-brand="used">
-                <img src="https://images.unsplash.com/photo-1517845164171-efb0347a8c4e?q=80&w=800" alt="Used Bike 2" class="product-img">
-                <div class="product-info">
-                    <span class="product-brand">YAMAHA</span>
-                    <h3 class="product-name">MT-07</h3>
-                    <span class="product-price">二手價 $198,000</span>
-                    <div class="product-specs">
-                        <span>689cc</span> | <span>2020年式</span> | <span>里程8,200km</span>
-                    </div>
-                    <a href="booking-ride.html?model=YAMAHA MT-07&brand=used" class="btn-view">預約看車</a>
-                </div>
-            </div>
-
+            <!-- 二手車將在此由 loadInventoryFromLocalStorage() 產生 -->
         </div>
     </main>
 
@@ -204,7 +286,54 @@
         // 頁面加載時顯示所有產品
         document.addEventListener('DOMContentLoaded', function() {
             filterBikes('all');
+            // 載入來自後台的現車庫存
+            loadInventoryFromLocalStorage();
         });
+
+        function loadInventoryFromLocalStorage() {
+            const grid = document.getElementById('bikeGrid');
+            if (!grid) return;
+            // 先清空現有
+            // 注意：filterBikes 會操作 .product-card，因此先清空再生成
+            grid.innerHTML = '';
+            const submissions = JSON.parse(localStorage.getItem('formSubmissions') || '[]');
+            const inventories = submissions.filter(s => s && s.type === 'inventory');
+            if (!inventories || inventories.length === 0) {
+                const empty = document.createElement('div');
+                empty.className = 'text-center';
+                empty.style.padding = '40px';
+                grid.appendChild(empty);
+                return;
+            }
+
+            inventories.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                const brand = (item.brand || item.model || '其他').toString();
+                card.setAttribute('data-brand', brand.toLowerCase());
+                if (item.used) card.classList.add('used');
+
+                const imgSrc = item.image || 'https://via.placeholder.com/800x450?text=No+Image';
+                const priceText = item.price ? `售價 ${Number(item.price).toLocaleString()} 元` : '價格未定';
+                const specs = [];
+                if (item.year) specs.push(item.year);
+                if (item.color) specs.push(item.color);
+                if (item.mileage) specs.push(item.mileage + (isNaN(item.mileage) ? '' : ' km'));
+
+                card.innerHTML = `
+                    <img src="${imgSrc}" alt="${item.model || '車款'}" class="product-img">
+                    <div class="product-info">
+                        <span class="product-brand">${brand.toUpperCase()}</span>
+                        <h3 class="product-name">${item.model || '未命名車款'}</h3>
+                        <span class="product-price">${priceText}</span>
+                        <div class="product-specs">${specs.map(s=>`<span>${s}</span>`).join(' | ')}</div>
+                        <a href="booking-ride.html?model=${encodeURIComponent(item.model||'')}&brand=${encodeURIComponent(brand)}" class="btn-view">預約賞車</a>
+                    </div>
+                `;
+
+                grid.appendChild(card);
+            });
+        }
     </script>
     <script src="js/mobile-menu.js"></script>
 </body>

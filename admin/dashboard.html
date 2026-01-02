@@ -349,6 +349,13 @@
                 <li class="menu-item" data-tab="events">
                     <i class="fas fa-calendar-alt"></i> 活動報名
                 </li>
+                <li class="menu-divider">業績管理</li>
+                <li class="menu-item" data-tab="sales-today">
+                    <i class="fas fa-sun"></i> 今日業績
+                </li>
+                <li class="menu-item" data-tab="sales-month">
+                    <i class="fas fa-calendar-alt"></i> 本月業績
+                </li>
                 <li class="menu-divider">系統</li>
                 <li class="menu-item">
                     <i class="fas fa-cog"></i> 系統設定
@@ -410,6 +417,7 @@
                         <span class="stat-change">尚無資料</span>
                     </div>
                 </div>
+                <!-- 業績統計已移至業績管理分頁：sales-today / sales-month -->
             </div>
 
             <!-- 預約保養管理 -->
@@ -420,9 +428,7 @@
                         <button class="btn btn-primary btn-sm" id="refresh-maintenance">
                             <i class="fas fa-sync-alt"></i> 刷新
                         </button>
-                        <button class="btn btn-primary btn-sm" id="add-maintenance">
-                            <i class="fas fa-plus"></i> 新增預約
-                        </button>
+                       
                     </div>
                 </div>
                 <div class="card-body">
@@ -449,6 +455,64 @@
                 </div>
             </div>
 
+            <!-- 業績管理：今日業績 -->
+            <div class="card" id="sales-today-section" style="display:none;">
+                <div class="card-header">
+                    <span>今日業績</span>
+                    <div>
+                        <input type="date" id="sales-today-date" style="margin-right:8px;">
+                        <button class="btn btn-primary btn-sm" id="refresh-sales-today">刷新業績</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div style="display:flex; gap:16px; margin-bottom:16px;">
+                        <div style="flex:1; background:#fff; padding:12px; border-radius:6px; box-shadow:var(--card-shadow);">
+                            <h4>今日業績</h4>
+                            <p id="sales-today-amount">0</p>
+                            <small id="sales-today-note">以完成項目計</small>
+                        </div>
+                    </div>
+                    <div>
+                        <h5>今日明細（完成）</h5>
+                        <table class="table" id="sales-today-table">
+                            <thead>
+                                <tr><th>日期</th><th>姓名</th><th>項目</th><th>金額</th></tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 業績管理：本月業績 -->
+            <div class="card" id="sales-month-section" style="display:none;">
+                <div class="card-header">
+                    <span>本月業績</span>
+                    <div>
+                        <input type="month" id="sales-month-month" style="margin-right:8px;">
+                        <button class="btn btn-primary btn-sm" id="refresh-sales-month">刷新業績</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div style="display:flex; gap:16px; margin-bottom:16px;">
+                        <div style="flex:1; background:#fff; padding:12px; border-radius:6px; box-shadow:var(--card-shadow);">
+                            <h4>本月業績</h4>
+                            <p id="sales-month-amount">0</p>
+                            <small id="sales-month-note">以完成項目計</small>
+                        </div>
+                    </div>
+                    <div>
+                        <h5>本月明細（完成）</h5>
+                        <table class="table" id="sales-month-table">
+                            <thead>
+                                <tr><th>日期</th><th>姓名</th><th>項目</th><th>金額</th></tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
             <!-- 預約賞車管理 -->
             <div class="card" id="test-drive-section" style="display: none;">
                 <div class="card-header">
@@ -457,9 +521,7 @@
                         <button class="btn btn-primary btn-sm" id="refresh-test-drive">
                             <i class="fas fa-sync-alt"></i> 刷新
                         </button>
-                        <button class="btn btn-primary btn-sm" id="add-test-drive">
-                            <i class="fas fa-plus"></i> 新增預約
-                        </button>
+                        
                     </div>
                 </div>
                 <div class="card-body">
@@ -478,22 +540,6 @@
                                     <th>人員備註</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td>#TD2023123001</td>
-                                    <td>林小華</td>
-                                    <td>0988-765-432</td>
-                                    <td>2023/12/31 14:30</td>
-                                    <td>Model Y</td>
-                                    <td>張大衛</td>
-                                    <td><span style="color: #f39c12;">待確認</span></td>
-                                    <td>
-                                        <button class="btn btn-primary btn-sm">編輯</button>
-                                        <button class="btn btn-danger btn-sm">刪除</button>
-                                    </td>
-                                </tr>
-                                <!-- 更多賞車預約資料 -->
-                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -558,7 +604,6 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>車牌號碼</th>
                                     <th>車型</th>
                                     <th>顏色</th>
                                     <th>年份</th>
@@ -592,12 +637,12 @@
     </div>
 
     <!-- 新增/編輯表單模態框 -->
-    <div class="modal" id="formModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+    <div class="modal" id="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
         <div class="modal-content" style="background: white; padding: 20px; border-radius: 8px; width: 80%; max-width: 600px; max-height: 90vh; overflow-y: auto;">
-            <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #eee;">
-                <h3 id="modalTitle">新增預約</h3>
-                <button id="closeModal" style="background: none; border: none; font-size: 24px; cursor: pointer;">&times;</button>
-            </div>
+                <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #eee;">
+                    <h3 id="modalTitle" style="margin:0; font-size:1.1rem;"></h3>
+                    <button id="closeModal" style="background:transparent; border:none; font-size:1.6rem; line-height:1; cursor:pointer;">&times;</button>
+                </div>
             <div class="modal-body" id="formContent">
                 <!-- 表單內容將由JavaScript動態生成 -->
             </div>
@@ -858,6 +903,27 @@
             // 初始化庫存統計與所有統計
             if (typeof updateInventoryCount === 'function') updateInventoryCount();
             if (typeof updateAllStats === 'function') updateAllStats();
+            // 綁定個別業績刷新按鈕（若存在）以避免在分頁載入時遺漏
+            const salesTodayBtn = document.getElementById('refresh-sales-today');
+            if (salesTodayBtn) salesTodayBtn.addEventListener('click', function() { 
+                const d = document.getElementById('sales-today-date');
+                const val = d ? d.value : '';
+                if (typeof updateRevenueStats === 'function') updateRevenueStats('today', val || undefined);
+            });
+            const salesMonthBtn = document.getElementById('refresh-sales-month');
+            if (salesMonthBtn) salesMonthBtn.addEventListener('click', function() { 
+                const m = document.getElementById('sales-month-month');
+                const val = m ? m.value : '';
+                if (typeof updateRevenueStats === 'function') updateRevenueStats('month', val || undefined);
+            });
+            // 設定預設日期/月份為今日與本月
+            const todayInput = document.getElementById('sales-today-date');
+            if (todayInput && !todayInput.value) todayInput.value = new Date().toISOString().split('T')[0];
+            const monthInput = document.getElementById('sales-month-month');
+            if (monthInput && !monthInput.value) {
+                const now = new Date();
+                monthInput.value = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+            }
         });
 
         // 當其他頁面修改 localStorage 時，自動更新此頁面列表與統計
@@ -1111,6 +1177,107 @@
 
             // 庫存
             updateInventoryCount();
+
+            // 更新業績統計
+            if (typeof updateRevenueStats === 'function') updateRevenueStats();
+        }
+
+        // 計算並更新業績（僅計算已完成的保養/服務項目）
+        // mode: undefined -> 更新今日與本月; 'today' -> 只更新今日; 'month' -> 只更新本月
+        function updateRevenueStats(mode, filter) {
+            const submissions = JSON.parse(localStorage.getItem('formSubmissions') || '[]');
+            const revenueTypes = ['maintenance', 'service'];
+            const now = new Date();
+            let todayStr = new Date().toISOString().split('T')[0];
+            let month = now.getMonth();
+            let year = now.getFullYear();
+            // 如果有傳入 filter，根據 mode 解析
+            if (filter) {
+                if (mode === 'today') {
+                    // filter 應為 YYYY-MM-DD
+                    todayStr = filter;
+                } else if (mode === 'month') {
+                    // filter 應為 YYYY-MM
+                    const parts = String(filter).split('-');
+                    if (parts.length === 2) {
+                        year = Number(parts[0]) || year;
+                        month = (Number(parts[1]) - 1) || month;
+                    }
+                }
+            }
+
+            let todaySum = 0;
+            let monthSum = 0;
+            const recentToday = [];
+            const recentMonth = [];
+
+            submissions.forEach(s => {
+                if (!s) return;
+                if (!revenueTypes.includes(s.type)) return;
+                if (s.status !== 'completed') return;
+
+                let priceVal = 0;
+                if (s.price !== undefined && s.price !== null && s.price !== '') {
+                    priceVal = Number(String(s.price).replace(/[^0-9.-]+/g, '')) || 0;
+                } else if (s.amount !== undefined) {
+                    priceVal = Number(String(s.amount).replace(/[^0-9.-]+/g, '')) || 0;
+                }
+
+                let dateStr = s.date || null;
+                if (!dateStr && s.completedAt) dateStr = s.completedAt.split('T')[0];
+
+                if (dateStr) {
+                    const d = new Date(dateStr);
+                    if (d.toISOString().split('T')[0] === todayStr) {
+                        todaySum += priceVal;
+                        recentToday.push({ date: dateStr, name: s.name || '', item: s.serviceType || s.service || '', price: priceVal });
+                    }
+                    if (d.getFullYear() === year && d.getMonth() === month) {
+                        monthSum += priceVal;
+                        recentMonth.push({ date: dateStr, name: s.name || '', item: s.serviceType || s.service || '', price: priceVal });
+                    }
+                }
+            });
+
+            // 更新今日
+            if (!mode || mode === 'today') {
+                const todayElem = document.getElementById('sales-today-amount');
+                const todayNote = document.getElementById('sales-today-note');
+                if (todayElem) todayElem.textContent = formatCurrency(todaySum);
+                if (todayNote) todayNote.textContent = '已完成項目（今日）';
+                const tbodyToday = document.querySelector('#sales-today-table tbody');
+                if (tbodyToday) {
+                    tbodyToday.innerHTML = '';
+                    recentToday.sort((a, b) => new Date(b.date) - new Date(a.date));
+                    recentToday.forEach(r => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `<td>${r.date || '--'}</td><td>${r.name}</td><td>${r.item}</td><td>${formatCurrency(r.price)}</td>`;
+                        tbodyToday.appendChild(tr);
+                    });
+                }
+            }
+
+            // 更新本月
+            if (!mode || mode === 'month') {
+                const monthElem = document.getElementById('sales-month-amount');
+                const monthNote = document.getElementById('sales-month-note');
+                if (monthElem) monthElem.textContent = formatCurrency(monthSum);
+                if (monthNote) monthNote.textContent = '已完成項目（本月）';
+                const tbodyMonth = document.querySelector('#sales-month-table tbody');
+                if (tbodyMonth) {
+                    tbodyMonth.innerHTML = '';
+                    recentMonth.sort((a, b) => new Date(b.date) - new Date(a.date));
+                    recentMonth.forEach(r => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `<td>${r.date || '--'}</td><td>${r.name}</td><td>${r.item}</td><td>${formatCurrency(r.price)}</td>`;
+                        tbodyMonth.appendChild(tr);
+                    });
+                }
+            }
+        }
+
+        function formatCurrency(n) {
+            return Number(n || 0).toLocaleString('zh-TW', { style: 'currency', currency: 'TWD', maximumFractionDigits: 0 });
         }
         
         // 更新活動報名人數計數
@@ -1407,10 +1574,11 @@
                 title: '車輛庫存',
                 fields: [
                     { type: 'text', id: 'model', label: '車型', required: true },
-                    { type: 'number', id: 'year', label: '年份', min: 2000, max: new Date().getFullYear() + 1, required: true },
                     { type: 'text', id: 'color', label: '顏色', required: true },
-                    { type: 'number', id: 'price', label: '價格', min: 0, step: 1000, required: true },
-                    { type: 'number', id: 'stock', label: '庫存數量', min: 0, required: true },
+                    { type: 'number', id: 'year', label: '年份', min: 1900, max: new Date().getFullYear() + 1, required: true },
+                    { type: 'number', id: 'mileage', label: '里程數 (km)', min: 0, step: 1 },
+                    { type: 'number', id: 'price', label: '售價', min: 0, step: 100, required: true },
+                    { type: 'number', id: 'stock', label: '庫存數量', min: 0 },
                     { type: 'text', id: 'vin', label: '車身號碼 (VIN)' },
                     { type: 'file', id: 'image', label: '車輛圖片', accept: 'image/*' }
                 ]
@@ -1513,7 +1681,7 @@
                 
                 // 更新頁面標題
                 let pageTitle = menuItem ? menuItem.textContent.trim() : tabId;
-                // 特別處理保養預約的標題
+                // 特別處理各標題
                 if (tabId === 'maintenance') {
                     pageTitle = '預約保養管理';
                 } else if (tabId === 'test-drive') {
@@ -1522,6 +1690,10 @@
                     pageTitle = '活動報名管理';
                 } else if (tabId === 'inventory') {
                     pageTitle = '現車庫存管理';
+                } else if (tabId === 'sales-today') {
+                    pageTitle = '今日業績';
+                } else if (tabId === 'sales-month') {
+                    pageTitle = '本月業績';
                 }
                 const pageHeader = document.querySelector('.page-header h1');
                 if (pageHeader) {
@@ -1559,28 +1731,35 @@
         // 初始化模態框
         function initModals() {
             // 關閉按鈕
-            document.getElementById('closeModal').addEventListener('click', closeModal);
-            
+            const closeBtn = document.getElementById('closeModal');
+            if (closeBtn) closeBtn.addEventListener('click', closeModal);
+
             // 點擊模態框外部關閉
-            document.getElementById('modal').addEventListener('click', function(e) {
-                if (e.target === this) {
-                    closeModal();
-                }
-            });
-            
+            const modalEl = document.getElementById('modal');
+            if (modalEl) {
+                modalEl.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeModal();
+                    }
+                });
+            }
+
             // 阻止點擊模態框內容時關閉
-            document.querySelector('.modal-content').addEventListener('click', function(e) {
-                e.stopPropagation();
-            });
+            const modalContent = document.querySelector('.modal-content');
+            if (modalContent) modalContent.addEventListener('click', function(e) { e.stopPropagation(); });
         }
         
         // 初始化按鈕事件
         function initButtons() {
-            // 新增按鈕
-            document.getElementById('add-maintenance').addEventListener('click', () => openModal('maintenance'));
-            document.getElementById('add-test-drive').addEventListener('click', () => openModal('testDrive'));
-            document.getElementById('add-event').addEventListener('click', () => openModal('event'));
-            document.getElementById('add-inventory').addEventListener('click', () => openModal('inventory'));
+            // 新增按鈕（先檢查元素是否存在以避免初始化錯誤）
+            const addMaintenanceBtn = document.getElementById('add-maintenance');
+            if (addMaintenanceBtn) addMaintenanceBtn.addEventListener('click', () => openModal('maintenance'));
+            const addTestDriveBtn = document.getElementById('add-test-drive');
+            if (addTestDriveBtn) addTestDriveBtn.addEventListener('click', () => openModal('testDrive'));
+            const addEventBtn = document.getElementById('add-event');
+            if (addEventBtn) addEventBtn.addEventListener('click', () => openModal('event'));
+            const addInventoryBtn = document.getElementById('add-inventory');
+            if (addInventoryBtn) addInventoryBtn.addEventListener('click', () => openModal('inventory'));
             
             // 導航按鈕
             document.querySelector('.admin-logo').addEventListener('click', (e) => {
@@ -1781,6 +1960,14 @@
             
             // 獲取當前表單類型
             const formType = currentModal;
+
+            // 對 inventory 表單的數值欄位做型別轉換
+            if (formType === 'inventory') {
+                if (formValues.price) formValues.price = Number(formValues.price);
+                if (formValues.year) formValues.year = Number(formValues.year);
+                if (formValues.mileage) formValues.mileage = Number(formValues.mileage);
+                if (formValues.stock) formValues.stock = Number(formValues.stock);
+            }
             
             // 從本地存儲獲取現有數據
             let submissions = JSON.parse(localStorage.getItem('formSubmissions') || '[]');
@@ -2220,49 +2407,7 @@
             modal.style.display = 'flex';
         });
 
-        // 新增車輛庫存
-        document.getElementById('add-inventory').addEventListener('click', function() {
-            document.getElementById('modalTitle').textContent = '新增車輛庫存';
-            document.getElementById('formContent').innerHTML = `
-                <form id="inventoryForm" onsubmit="saveInventory(event)">
-                    <div class="form-group">
-                        <label for="licensePlateNo">車牌號碼</label>
-                        <input type="text" id="licensePlateNo" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="inventoryModel">車型</label>
-                        <select id="inventoryModel" class="form-control" required>
-                            <option value="">-- 請選擇車型 --</option>
-                            <option value="Model S">Model S</option>
-                            <option value="Model 3">Model 3</option>
-                            <option value="Model X">Model X</option>
-                            <option value="Model Y">Model Y</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="color">顏色</label>
-                        <input type="text" id="color" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="year">年份</label>
-                        <input type="number" id="year" class="form-control" min="2000" max="2025" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="mileage">里程數 (公里)</label>
-                        <input type="number" id="mileage" class="form-control" min="0" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="price">售價 (新台幣)</label>
-                        <input type="number" id="price" class="form-control" min="0" required>
-                    </div>
-                    <div style="text-align: right; margin-top: 20px;">
-                        <button type="button" class="btn btn-danger" onclick="closeModal()">取消</button>
-                        <button type="submit" class="btn btn-primary">儲存</button>
-                    </div>
-                </form>
-            `;
-            modal.style.display = 'flex';
-        });
+        // 使用通用模態表單模板處理新增/編輯行為，inventory 表單由 `openModal('inventory')` 處理
 
         // 表單提交處理函數
         function saveMaintenance(e) {
@@ -2359,34 +2504,7 @@
             closeModal();
         }
 
-        function saveInventory(e) {
-            e.preventDefault();
-            const plate = document.getElementById('licensePlateNo').value;
-            const model = document.getElementById('inventoryModel').value;
-            const color = document.getElementById('color').value;
-            const year = document.getElementById('year').value;
-            const mileage = document.getElementById('mileage').value;
-            const price = document.getElementById('price').value;
-
-            const item = {
-                id: Date.now(),
-                type: 'inventory',
-                plate: plate,
-                model: model,
-                color: color,
-                year: year,
-                mileage: Number(mileage),
-                price: Number(price)
-            };
-            const submissions = JSON.parse(localStorage.getItem('formSubmissions') || '[]');
-            submissions.push(item);
-            localStorage.setItem('formSubmissions', JSON.stringify(submissions));
-            // 更新庫存顯示／統計
-            if (typeof updateInventoryCount === 'function') updateInventoryCount();
-            if (typeof updateAllStats === 'function') updateAllStats();
-            alert('車輛庫存已新增');
-            closeModal();
-        }
+        // inventory 表單由泛用的 handleFormSubmit 處理，資料會寫入 localStorage.formSubmissions
     </script>
     <!-- 引入行動選單 JavaScript -->
     <script src="../js/mobile-menu.js"></script>
